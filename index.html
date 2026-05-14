@@ -287,12 +287,15 @@
       transition: width 0.5s ease;
     }
 
-    /* 퀴즈 카드 */
+    /* 퀴즈 카드 - viewport 기준 높이 제한 */
     .quiz-card {
       background: white;
       border-radius: var(--radius);
-      padding: clamp(20px, 4vw, 36px);
+      padding: clamp(14px, 2.5vw, 28px) clamp(16px, 3vw, 32px);
       box-shadow: var(--shadow);
+      /* 헤더(~56px) + 진행바(~80px) + 하단 여백 제외한 나머지 viewport 사용 */
+      max-height: calc(100dvh - 180px);
+      overflow-y: auto;
     }
 
     .quiz-type-badge {
@@ -308,11 +311,11 @@
 
     /* 문제 텍스트 65% 크기 */
     .quiz-question {
-      font-size: clamp(1.15rem, 3.5vw, 1.5rem);
+      font-size: clamp(1.05rem, 2.8vw, 1.4rem);
       font-weight: 700;
-      line-height: 1.65;
+      line-height: 1.6;
       color: var(--text);
-      margin-bottom: 24px;
+      margin-bottom: clamp(14px, 2.5vh, 22px);
     }
 
     /* 4지선다 옵션 */
@@ -350,18 +353,18 @@
     .option-btn.correct { background: #D4EDDA; border-color: #28A745; color: #155724; }
     .option-btn.wrong   { background: #F8D7DA; border-color: #DC3545; color: #721C24; }
 
-    /* OX 버튼 */
+        /* OX 버튼 - viewport 높이 기준 반응형 */
     .ox-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: clamp(10px, 2vw, 20px);
     }
-
     .ox-btn {
       border: none;
       border-radius: var(--radius);
-      padding: clamp(28px, 6vw, 48px) 20px;
-      font-size: clamp(3rem, 8vw, 5rem);
+      /* 상하 padding을 vh 기준으로 설정해 viewport 높이에 맞게 자동 충축 */
+      padding: clamp(14px, 4vh, 36px) 20px;
+      font-size: clamp(2.2rem, 6vh, 4.5rem);
       font-weight: 900;
       cursor: pointer;
       transition: all 0.2s;
@@ -1584,10 +1587,9 @@ function handleMCQAnswer(btn, selected, answer, explanation) {
       card.appendChild(box);
       setTimeout(() => box.remove(), 1200);
     }
-    setTimeout(() => {
+        setTimeout(() => {
       gameState.currentQuizIndex++;
-      gameState.wrongCount = 0;
-      updateWrongDots(0, 'quiz');
+      // 오답 카운트는 정답 후에도 유지 (초기화 안 함)
       renderCurrentQuiz();
     }, 900);
   } else {
@@ -1595,7 +1597,6 @@ function handleMCQAnswer(btn, selected, answer, explanation) {
     shakeElement(btn);
     gameState.wrongCount++;
     updateWrongDots(gameState.wrongCount, 'quiz');
-
     if (gameState.wrongCount >= 3) {
       lockInput(() => {
         gameState.wrongCount       = 0;
@@ -1644,8 +1645,7 @@ function handleOXAnswer(selected, quiz) {
     }
     setTimeout(() => {
       gameState.currentQuizIndex++;
-      gameState.wrongCount = 0;
-      updateWrongDots(0, 'quiz');
+      // 오답 카운트는 정답 후에도 유지 (초기화 안 함)
       renderCurrentQuiz();
     }, 900);
   } else {
@@ -1709,8 +1709,7 @@ function handleInitialAnswer(input, quiz) {
     }
     setTimeout(() => {
       gameState.currentQuizIndex++;
-      gameState.wrongCount = 0;
-      updateWrongDots(0, 'quiz');
+      // 오답 카운트는 정답 후에도 유지 (초기화 안 함)
       renderCurrentQuiz();
     }, 900);
   } else {
