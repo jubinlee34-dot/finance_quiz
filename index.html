@@ -440,6 +440,13 @@
       line-height: 1.6;
       color: #4a4a6a;
       margin-top: 14px;
+      animation: explanationFlash 1.2s ease forwards;
+    }
+    @keyframes explanationFlash {
+      0%   { opacity: 0; transform: translateY(-6px); }
+      20%  { opacity: 1; transform: translateY(0); }
+      70%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(4px); }
     }
 
     /* 오답 점 */
@@ -1571,7 +1578,11 @@ function handleMCQAnswer(btn, selected, answer, explanation) {
       const box = document.createElement('div');
       box.className = 'explanation-box';
       box.textContent = '💡 ' + explanation;
-      document.getElementById('quizCard').appendChild(box);
+      const card = document.getElementById('quizCard');
+      // 기존 설명 박스 제거 후 새로 추가
+      card.querySelectorAll('.explanation-box').forEach(b => b.remove());
+      card.appendChild(box);
+      setTimeout(() => box.remove(), 1200);
     }
     setTimeout(() => {
       gameState.currentQuizIndex++;
@@ -1626,7 +1637,10 @@ function handleOXAnswer(selected, quiz) {
       const box = document.createElement('div');
       box.className = 'explanation-box';
       box.textContent = '💡 ' + quiz.explanation;
-      document.getElementById('quizCard').appendChild(box);
+      const card = document.getElementById('quizCard');
+      card.querySelectorAll('.explanation-box').forEach(b => b.remove());
+      card.appendChild(box);
+      setTimeout(() => box.remove(), 1200);
     }
     setTimeout(() => {
       gameState.currentQuizIndex++;
@@ -1688,7 +1702,10 @@ function handleInitialAnswer(input, quiz) {
       const box = document.createElement('div');
       box.className = 'explanation-box';
       box.textContent = '💡 ' + quiz.explanation;
-      document.getElementById('quizCard').appendChild(box);
+      const card = document.getElementById('quizCard');
+      card.querySelectorAll('.explanation-box').forEach(b => b.remove());
+      card.appendChild(box);
+      setTimeout(() => box.remove(), 1200);
     }
     setTimeout(() => {
       gameState.currentQuizIndex++;
