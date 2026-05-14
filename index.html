@@ -603,23 +603,25 @@
     }
     /* 매칭 완료 - 문제 카드: 밝은 노란-민트 그라디언트 + 텍스트 표시 */
     .mem-card.q-type.matched {
-      background: linear-gradient(135deg, #FFFDE7, #E0F7FA) !important;
+      background: linear-gradient(135deg, #FFFDE7, #B2EBF2) !important;
       border-color: #26C6DA;
-      box-shadow: 0 0 0 2px rgba(38,198,218,0.35), 0 4px 14px rgba(38,198,218,0.2);
+      border-width: 3px;
+      box-shadow: 0 0 0 2px rgba(38,198,218,0.4), 0 6px 16px rgba(38,198,218,0.25);
       opacity: 1;
     }
     .mem-card.q-type.matched .card-inner {
       opacity: 1;
-      font-size: clamp(0.55rem, 1.6vw, 0.82rem);
-      font-weight: 700;
-      color: #00838F;
-      line-height: 1.4;
-      padding: 6px;
+      font-size: clamp(0.6rem, 1.8vw, 0.88rem);
+      font-weight: 800;
+      color: #006064;
+      line-height: 1.45;
+      padding: 8px 6px;
       word-break: keep-all;
       overflow: hidden;
       display: -webkit-box;
       -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
+      text-align: center;
     }
     .mem-card.matched::after {
       content: '✓';
