@@ -433,23 +433,32 @@
     .hint-btn:hover:not(:disabled) { transform: translateY(-2px); }
     .hint-btn:disabled { background: #b2bec3; cursor: not-allowed; color: #636e72; }
 
-    /* 설명 박스 */
+    /* 설명 박스 - 화면 하단 고정 토스트 */
     .explanation-box {
-      background: #EEF2FF;
-      border-left: 4px solid var(--purple);
-      border-radius: 0 12px 12px 0;
-      padding: 14px 18px;
-      font-size: clamp(0.9rem, 2vw, 1rem);
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9000;
+      background: linear-gradient(135deg, #5C6BC0, #7E57C2);
+      color: white;
+      border-radius: 16px;
+      padding: 14px 22px;
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+      font-weight: 600;
       line-height: 1.6;
-      color: #4a4a6a;
-      margin-top: 14px;
-      animation: explanationFlash 1.2s ease forwards;
+      max-width: min(90vw, 520px);
+      width: max-content;
+      box-shadow: 0 8px 24px rgba(92,107,192,0.45);
+      text-align: center;
+      animation: toastSlide 1.6s ease forwards;
+      pointer-events: none;
     }
-    @keyframes explanationFlash {
-      0%   { opacity: 0; transform: translateY(-6px); }
-      20%  { opacity: 1; transform: translateY(0); }
+    @keyframes toastSlide {
+      0%   { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
       70%  { opacity: 1; }
-      100% { opacity: 0; transform: translateY(4px); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
     }
 
     /* 오답 점 */
@@ -1578,14 +1587,12 @@ function handleMCQAnswer(btn, selected, answer, explanation) {
     btn.classList.add('correct');
     disableAllOptions();
     if (explanation) {
+      document.querySelectorAll('.explanation-box').forEach(b => b.remove());
       const box = document.createElement('div');
       box.className = 'explanation-box';
       box.textContent = '💡 ' + explanation;
-      const card = document.getElementById('quizCard');
-      // 기존 설명 박스 제거 후 새로 추가
-      card.querySelectorAll('.explanation-box').forEach(b => b.remove());
-      card.appendChild(box);
-      setTimeout(() => box.remove(), 1200);
+      document.body.appendChild(box);
+      setTimeout(() => box.remove(), 1600);
     }
         setTimeout(() => {
       gameState.currentQuizIndex++;
@@ -1635,13 +1642,12 @@ function handleOXAnswer(selected, quiz) {
     document.getElementById('oBtn').disabled = true;
     document.getElementById('xBtn').disabled = true;
     if (quiz.explanation) {
+      document.querySelectorAll('.explanation-box').forEach(b => b.remove());
       const box = document.createElement('div');
       box.className = 'explanation-box';
       box.textContent = '💡 ' + quiz.explanation;
-      const card = document.getElementById('quizCard');
-      card.querySelectorAll('.explanation-box').forEach(b => b.remove());
-      card.appendChild(box);
-      setTimeout(() => box.remove(), 1200);
+      document.body.appendChild(box);
+      setTimeout(() => box.remove(), 1600);
     }
     setTimeout(() => {
       gameState.currentQuizIndex++;
@@ -1699,13 +1705,12 @@ function handleInitialAnswer(input, quiz) {
     input.disabled = true;
     document.getElementById('initialSubmit').disabled = true;
     if (quiz.explanation) {
+      document.querySelectorAll('.explanation-box').forEach(b => b.remove());
       const box = document.createElement('div');
       box.className = 'explanation-box';
       box.textContent = '💡 ' + quiz.explanation;
-      const card = document.getElementById('quizCard');
-      card.querySelectorAll('.explanation-box').forEach(b => b.remove());
-      card.appendChild(box);
-      setTimeout(() => box.remove(), 1200);
+      document.body.appendChild(box);
+      setTimeout(() => box.remove(), 1600);
     }
     setTimeout(() => {
       gameState.currentQuizIndex++;
