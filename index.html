@@ -2,11 +2,13 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>경제꿈터 금융 방탈출</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     /* ===========================
-       전역 스타일 & 변수
+       전역 변수 & 리셋
     =========================== */
     :root {
       --primary: #FF6B6B;
@@ -20,11 +22,14 @@
       --shadow: 0 8px 24px rgba(0,0,0,0.12);
       --radius: 20px;
       --font: 'Noto Sans KR', sans-serif;
+
+      /* 퀴즈 콘텐츠 최대 너비 (65% 크기 기준) */
+      --quiz-max: 720px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
+    html, body {
       font-family: var(--font);
       background: var(--bg);
       color: var(--text);
@@ -44,7 +49,7 @@
     .header {
       background: linear-gradient(135deg, var(--primary), var(--purple));
       color: white;
-      padding: 16px 20px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -52,10 +57,11 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      flex-shrink: 0;
     }
 
     .header h1 {
-      font-size: 1.3rem;
+      font-size: clamp(1rem, 3.5vw, 1.4rem);
       font-weight: 700;
       text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
     }
@@ -75,6 +81,7 @@
       justify-content: center;
       transition: all 0.2s;
       color: white;
+      flex-shrink: 0;
     }
 
     .icon-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
@@ -89,26 +96,23 @@
 
     .main-content {
       flex: 1;
-      padding: 20px;
+      padding: 24px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 20px;
     }
 
-    .main-title {
-      text-align: center;
-      margin-bottom: 24px;
-    }
+    .main-title { text-align: center; }
 
     .main-title h2 {
-      font-size: 1.8rem;
+      font-size: clamp(1.5rem, 5vw, 2rem);
       font-weight: 800;
       color: var(--primary);
-      text-shadow: 2px 2px 0px rgba(255,107,107,0.2);
     }
 
     .main-title p {
-      font-size: 1rem;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
       color: #636e72;
       margin-top: 6px;
     }
@@ -119,7 +123,7 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
     }
 
     .room-card {
@@ -130,7 +134,7 @@
       cursor: pointer;
       transition: transform 0.25s, box-shadow 0.25s;
       position: relative;
-      aspect-ratio: 1;
+      aspect-ratio: 1 / 1;
     }
 
     .room-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 16px 40px rgba(0,0,0,0.18); }
@@ -145,45 +149,35 @@
 
     .room-card .room-label {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       background: linear-gradient(transparent, rgba(0,0,0,0.65));
       color: white;
-      font-size: 0.85rem;
+      font-size: clamp(0.75rem, 2vw, 0.9rem);
       font-weight: 700;
       padding: 20px 10px 10px;
       text-align: center;
     }
 
-    /* 클리어된 방 */
-    .room-card.cleared {
-      cursor: default;
-      transform: none !important;
-    }
-
+    .room-card.cleared { cursor: default; transform: none !important; }
     .room-card.cleared:hover { transform: none; box-shadow: var(--shadow); }
 
     .cleared-display {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       background: linear-gradient(135deg, #55EFC4, #00B894);
       color: white;
     }
 
     .cleared-display .code-number {
-      font-size: 3rem;
+      font-size: clamp(2.5rem, 8vw, 3.5rem);
       font-weight: 900;
       text-shadow: 2px 2px 6px rgba(0,0,0,0.2);
       animation: pulse 2s infinite;
     }
 
     .cleared-display .cleared-label {
-      font-size: 0.85rem;
+      font-size: clamp(0.75rem, 2vw, 0.9rem);
       margin-top: 4px;
       opacity: 0.9;
     }
@@ -195,9 +189,8 @@
 
     /* 방탈출 버튼 */
     .escape-section {
-      margin-top: 24px;
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -216,21 +209,18 @@
     .escape-btn {
       width: 100%;
       padding: 18px;
-      font-size: 1.3rem;
+      font-size: clamp(1.1rem, 3vw, 1.3rem);
       font-weight: 800;
       border: none;
       border-radius: var(--radius);
       cursor: pointer;
       transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
     }
 
     .escape-btn:disabled {
       background: #b2bec3;
       color: #636e72;
       cursor: not-allowed;
-      box-shadow: none;
     }
 
     .escape-btn.active {
@@ -246,7 +236,8 @@
     }
 
     /* ===========================
-       퀴즈 화면 공통
+       퀴즈 화면 공통 (1·2·3번방)
+       문제/정답 영역 65% 크기 확대
     =========================== */
     #quizScreen {
       background: linear-gradient(160deg, #F0F8FF 0%, #FFF0F5 100%);
@@ -257,17 +248,18 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      max-width: 600px;
+      gap: 18px;
+      /* 65% 크기: 화면 너비의 65% 기준 최대 너비 */
+      max-width: var(--quiz-max);
       margin: 0 auto;
       width: 100%;
     }
 
-    /* 진행도 바 */
+    /* 진행도 */
     .progress-section {
       background: white;
       border-radius: var(--radius);
-      padding: 14px 18px;
+      padding: 16px 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
@@ -275,22 +267,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
-      font-size: 0.85rem;
+      margin-bottom: 10px;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
       color: #636e72;
+      font-weight: 600;
     }
 
     .progress-bar {
-      height: 12px;
+      height: 14px;
       background: #f0f0f0;
-      border-radius: 6px;
+      border-radius: 7px;
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--secondary), var(--primary));
-      border-radius: 6px;
+      border-radius: 7px;
       transition: width 0.5s ease;
     }
 
@@ -298,7 +291,7 @@
     .quiz-card {
       background: white;
       border-radius: var(--radius);
-      padding: 24px;
+      padding: clamp(20px, 4vw, 36px);
       box-shadow: var(--shadow);
     }
 
@@ -306,40 +299,45 @@
       display: inline-block;
       background: linear-gradient(135deg, var(--secondary), var(--purple));
       color: white;
-      font-size: 0.75rem;
+      font-size: clamp(0.8rem, 2vw, 0.95rem);
       font-weight: 700;
-      padding: 4px 12px;
+      padding: 6px 16px;
       border-radius: 20px;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
+    /* 문제 텍스트 65% 크기 */
     .quiz-question {
-      font-size: 1.1rem;
+      font-size: clamp(1.15rem, 3.5vw, 1.5rem);
       font-weight: 700;
-      line-height: 1.6;
+      line-height: 1.65;
       color: var(--text);
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     /* 4지선다 옵션 */
     .options-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 14px;
     }
 
     .option-btn {
       background: #f8f9fa;
-      border: 2px solid #e9ecef;
-      border-radius: 14px;
-      padding: 14px 10px;
-      font-size: 0.9rem;
+      border: 2.5px solid #e9ecef;
+      border-radius: 16px;
+      padding: clamp(14px, 3vw, 22px) 12px;
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
       text-align: center;
       line-height: 1.4;
       color: var(--text);
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .option-btn:hover:not(:disabled) {
@@ -349,31 +347,21 @@
     }
 
     .option-btn:active:not(:disabled) { transform: scale(0.97); }
-
-    .option-btn.correct {
-      background: #D4EDDA;
-      border-color: #28A745;
-      color: #155724;
-    }
-
-    .option-btn.wrong {
-      background: #F8D7DA;
-      border-color: #DC3545;
-      color: #721C24;
-    }
+    .option-btn.correct { background: #D4EDDA; border-color: #28A745; color: #155724; }
+    .option-btn.wrong   { background: #F8D7DA; border-color: #DC3545; color: #721C24; }
 
     /* OX 버튼 */
     .ox-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 20px;
     }
 
     .ox-btn {
       border: none;
       border-radius: var(--radius);
-      padding: 30px;
-      font-size: 3rem;
+      padding: clamp(28px, 6vw, 48px) 20px;
+      font-size: clamp(3rem, 8vw, 5rem);
       font-weight: 900;
       cursor: pointer;
       transition: all 0.2s;
@@ -384,24 +372,23 @@
     .ox-btn.x-btn { background: linear-gradient(135deg, #4ECDC4, #44A08D); color: white; }
     .ox-btn:hover:not(:disabled) { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
     .ox-btn:active:not(:disabled) { transform: scale(0.97); }
-
     .ox-btn.correct { box-shadow: 0 0 0 4px #28A745, 0 8px 20px rgba(40,167,69,0.3); }
-    .ox-btn.wrong { box-shadow: 0 0 0 4px #DC3545, 0 8px 20px rgba(220,53,69,0.3); }
+    .ox-btn.wrong   { box-shadow: 0 0 0 4px #DC3545, 0 8px 20px rgba(220,53,69,0.3); }
 
     /* 초성퀴즈 입력 */
     .input-section {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .quiz-input {
       width: 100%;
-      padding: 16px 20px;
-      font-size: 1.2rem;
+      padding: clamp(16px, 3vw, 24px) 20px;
+      font-size: clamp(1.2rem, 3.5vw, 1.6rem);
       font-weight: 700;
       border: 3px solid #e9ecef;
-      border-radius: 14px;
+      border-radius: 16px;
       outline: none;
       transition: border-color 0.2s;
       text-align: center;
@@ -409,50 +396,69 @@
 
     .quiz-input:focus { border-color: var(--purple); }
     .quiz-input.correct { border-color: #28A745; background: #D4EDDA; }
-    .quiz-input.wrong { border-color: #DC3545; background: #F8D7DA; }
+    .quiz-input.wrong   { border-color: #DC3545; background: #F8D7DA; }
 
     .submit-btn {
       background: linear-gradient(135deg, var(--primary), var(--purple));
       color: white;
       border: none;
-      border-radius: 14px;
-      padding: 16px;
-      font-size: 1.1rem;
+      border-radius: 16px;
+      padding: clamp(16px, 3vw, 22px);
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
       box-shadow: 0 4px 12px rgba(255,107,107,0.3);
     }
 
-    .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,107,107,0.4); }
+    .submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
     .submit-btn:active:not(:disabled) { transform: scale(0.97); }
     .submit-btn:disabled { background: #b2bec3; cursor: not-allowed; box-shadow: none; }
 
-    /* 힌트 버튼 */
     .hint-btn {
       background: linear-gradient(135deg, var(--accent), #FDCB6E);
       color: #2D3436;
       border: none;
-      border-radius: 14px;
-      padding: 12px;
-      font-size: 0.95rem;
+      border-radius: 16px;
+      padding: clamp(12px, 2.5vw, 18px);
+      font-size: clamp(0.9rem, 2vw, 1.05rem);
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(253,203,110,0.4);
     }
 
     .hint-btn:hover:not(:disabled) { transform: translateY(-2px); }
-    .hint-btn:disabled { background: #b2bec3; cursor: not-allowed; box-shadow: none; color: #636e72; }
+    .hint-btn:disabled { background: #b2bec3; cursor: not-allowed; color: #636e72; }
 
-    /* 오답 카운트다운 */
+    /* 설명 박스 */
+    .explanation-box {
+      background: #EEF2FF;
+      border-left: 4px solid var(--purple);
+      border-radius: 0 12px 12px 0;
+      padding: 14px 18px;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      line-height: 1.6;
+      color: #4a4a6a;
+      margin-top: 14px;
+    }
+
+    /* 오답 점 */
+    .wrong-indicator { display: flex; gap: 6px; align-items: center; }
+
+    .wrong-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #e9ecef;
+      transition: background 0.3s;
+    }
+
+    .wrong-dot.filled { background: var(--primary); }
+
+    /* 오답 잠금 오버레이 */
     .lock-overlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       z-index: 500;
       animation: fadeIn 0.3s ease;
     }
@@ -460,19 +466,20 @@
     .lock-box {
       background: white;
       border-radius: var(--radius);
-      padding: 32px 40px;
+      padding: 36px 48px;
       text-align: center;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       animation: popIn 0.3s ease;
     }
 
-    .lock-box .lock-emoji { font-size: 3rem; margin-bottom: 12px; }
-    .lock-box h3 { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
-    .lock-box p { color: #636e72; font-size: 0.95rem; }
-    .lock-countdown { font-size: 3rem; font-weight: 900; color: var(--primary); margin-top: 12px; }
+    .lock-box .lock-emoji { font-size: 3.5rem; margin-bottom: 14px; }
+    .lock-box h3 { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+    .lock-box p  { color: #636e72; font-size: clamp(0.9rem, 2vw, 1rem); }
+    .lock-countdown { font-size: clamp(2.5rem, 7vw, 3.5rem); font-weight: 900; color: var(--primary); margin-top: 14px; }
 
     /* ===========================
-       카드 매칭 (4번방)
+       4번방 - 메모리 카드 게임
+       모든 카드 1:1 비율, 랜덤 그리드
     =========================== */
     #matchScreen {
       background: linear-gradient(160deg, #FFF0F5 0%, #F0F8FF 100%);
@@ -484,7 +491,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      max-width: 700px;
+      max-width: 900px;
       margin: 0 auto;
       width: 100%;
     }
@@ -492,135 +499,125 @@
     .match-info {
       background: white;
       border-radius: var(--radius);
-      padding: 14px 18px;
+      padding: 14px 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.9rem;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
       font-weight: 600;
-    }
-
-    .match-area {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .match-column h3 {
-      text-align: center;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #636e72;
-      margin-bottom: 10px;
-      background: white;
-      padding: 8px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-
-    .match-cards {
-      display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 8px;
     }
 
-    .q-card {
-      background: white;
-      border: 3px solid #e9ecef;
+    .match-guide {
+      background: linear-gradient(135deg, #EEF2FF, #FFF0F5);
       border-radius: 14px;
-      padding: 14px 12px;
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: 12px 16px;
+      font-size: clamp(0.8rem, 2vw, 0.95rem);
+      color: #636e72;
       text-align: center;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--purple);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: 1.5px solid #e9ecef;
     }
 
-    .q-card:hover:not(.matched):not(.selected):not(.disabled) {
-      border-color: var(--purple);
-      background: #EEF2FF;
-      transform: translateY(-2px);
+    /* 카드 그리드: 4열 × 4행 = 16카드 */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
     }
 
-    .q-card.selected {
-      border-color: var(--primary);
-      background: #FFF0F0;
-      transform: scale(1.02);
-    }
-
-    .q-card.matched {
-      border-color: #28A745;
-      background: #D4EDDA;
-      cursor: default;
-      color: #155724;
-    }
-
-    .q-card.wrong-shake {
-      animation: shake 0.5s ease;
-    }
-
-    .img-card {
-      background: white;
-      border: 3px solid #e9ecef;
+    /* 메모리 카드 공통 - 1:1 비율 */
+    .mem-card {
+      aspect-ratio: 1 / 1;
       border-radius: 14px;
-      overflow: hidden;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      aspect-ratio: 1;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      border: 3px solid #e9ecef;
+      overflow: hidden;
+      position: relative;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .img-card img {
+    .mem-card:hover:not(.matched):not(.disabled) {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.14);
+      border-color: var(--purple);
+    }
+
+    .mem-card:active:not(.matched):not(.disabled) { transform: scale(0.97); }
+
+    /* 문제 카드 스타일 */
+    .mem-card.q-type {
+      background: linear-gradient(135deg, #EEF2FF, #F8F0FF);
+      border-color: #c5b8fe;
+    }
+
+    .mem-card.q-type .card-inner {
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 900;
+      color: var(--purple);
+      text-align: center;
+    }
+
+    /* 이미지 카드 스타일 */
+    .mem-card.img-type .card-inner {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mem-card.img-type img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       display: block;
+      padding: 4px;
     }
 
-    .img-card:hover:not(.matched):not(.disabled) {
-      border-color: var(--secondary);
-      transform: translateY(-2px);
+    /* 선택된 카드 */
+    .mem-card.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255,107,107,0.35), 0 8px 20px rgba(255,107,107,0.2);
+      transform: scale(1.04);
     }
 
-    .img-card.matched {
+    /* 매칭 완료 카드 */
+    .mem-card.matched {
       border-color: #28A745;
+      background: linear-gradient(135deg, #D4EDDA, #C3E6CB) !important;
       cursor: default;
-      position: relative;
+      opacity: 0.75;
     }
 
-    .img-card.matched::after {
+    .mem-card.matched .card-inner {
+      opacity: 0.6;
+    }
+
+    .mem-card.matched::after {
       content: '✓';
       position: absolute;
-      top: 4px;
-      right: 8px;
-      font-size: 1.5rem;
+      top: 4px; right: 6px;
+      font-size: clamp(1rem, 3vw, 1.4rem);
       color: #28A745;
       font-weight: 900;
-      text-shadow: 0 0 4px white;
     }
 
-    .img-card.wrong-shake { animation: shake 0.5s ease; }
+    .mem-card.wrong-shake { animation: shake 0.5s ease; }
 
     /* ===========================
        팝업 모달
     =========================== */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       z-index: 1000;
       padding: 20px;
       animation: fadeIn 0.3s ease;
@@ -629,8 +626,8 @@
     .modal-box {
       background: white;
       border-radius: 24px;
-      padding: 28px 24px;
-      max-width: 480px;
+      padding: clamp(24px, 4vw, 36px);
+      max-width: 540px;
       width: 100%;
       box-shadow: 0 24px 64px rgba(0,0,0,0.3);
       animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -639,15 +636,15 @@
     }
 
     .modal-box h2 {
-      font-size: 1.3rem;
+      font-size: clamp(1.2rem, 3.5vw, 1.5rem);
       font-weight: 800;
       color: var(--primary);
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       text-align: center;
     }
 
     .modal-box p {
-      font-size: 0.95rem;
+      font-size: clamp(0.95rem, 2.5vw, 1.1rem);
       line-height: 1.7;
       color: var(--text);
       text-align: center;
@@ -656,7 +653,7 @@
 
     .modal-img {
       width: 100%;
-      max-height: 250px;
+      max-height: 280px;
       object-fit: contain;
       border-radius: 14px;
       margin-bottom: 16px;
@@ -665,8 +662,8 @@
 
     .modal-input {
       width: 100%;
-      padding: 16px;
-      font-size: 1.4rem;
+      padding: clamp(14px, 3vw, 20px);
+      font-size: clamp(1.3rem, 3.5vw, 1.6rem);
       font-weight: 700;
       border: 3px solid #e9ecef;
       border-radius: 14px;
@@ -680,8 +677,8 @@
 
     .modal-btn {
       width: 100%;
-      padding: 16px;
-      font-size: 1.1rem;
+      padding: clamp(14px, 3vw, 20px);
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
       font-weight: 700;
       border: none;
       border-radius: 14px;
@@ -696,7 +693,7 @@
       box-shadow: 0 4px 12px rgba(255,107,107,0.3);
     }
 
-    .modal-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,107,107,0.4); }
+    .modal-btn.primary:hover { transform: translateY(-2px); }
 
     .modal-btn.secondary {
       background: #f8f9fa;
@@ -706,25 +703,17 @@
 
     .modal-btn.secondary:hover { background: #e9ecef; }
 
-    /* 코드 획득 팝업 */
-    .code-reveal {
-      text-align: center;
-      padding: 20px 0;
-    }
+    .code-reveal { text-align: center; padding: 20px 0; }
 
     .code-reveal .code-big {
-      font-size: 5rem;
+      font-size: clamp(4rem, 12vw, 6rem);
       font-weight: 900;
       color: var(--primary);
       animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
       display: block;
     }
 
-    .code-reveal p {
-      font-size: 1rem;
-      color: #636e72;
-      margin-top: 8px;
-    }
+    .code-reveal p { font-size: clamp(0.95rem, 2.5vw, 1.1rem); color: #636e72; margin-top: 8px; }
 
     /* ===========================
        방탈출 입력 화면
@@ -735,48 +724,35 @@
 
     .escape-content {
       flex: 1;
-      padding: 20px;
+      padding: 24px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 24px;
     }
 
-    .escape-title {
-      text-align: center;
-      color: white;
-    }
+    .escape-title { text-align: center; color: white; }
 
     .escape-title h2 {
-      font-size: 1.6rem;
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
       font-weight: 800;
       text-shadow: 0 0 20px rgba(255,230,109,0.5);
     }
 
-    .escape-title p {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-top: 6px;
-    }
+    .escape-title p { font-size: clamp(0.85rem, 2vw, 1rem); opacity: 0.8; margin-top: 6px; }
 
-    .escape-input-display {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
+    .escape-input-display { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
     .code-slot {
-      width: 60px;
-      height: 70px;
+      width: clamp(56px, 12vw, 72px);
+      height: clamp(64px, 14vw, 84px);
       background: rgba(255,255,255,0.1);
       border: 3px solid rgba(255,255,255,0.3);
       border-radius: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       color: white;
-      font-size: 1.6rem;
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
       font-weight: 900;
       transition: all 0.3s;
     }
@@ -788,33 +764,27 @@
       box-shadow: 0 0 12px rgba(255,230,109,0.3);
     }
 
-    .code-slot .slot-label {
-      font-size: 0.6rem;
-      opacity: 0.7;
-      font-weight: 400;
-      margin-top: 2px;
-    }
+    .code-slot .slot-label { font-size: 0.6rem; opacity: 0.7; font-weight: 400; margin-top: 2px; }
 
     .escape-keypad {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
     }
 
     .key-btn {
       background: rgba(255,255,255,0.1);
       border: 2px solid rgba(255,255,255,0.2);
       border-radius: 14px;
-      padding: 14px 8px;
+      padding: clamp(12px, 3vw, 18px) 8px;
       color: white;
-      font-size: 0.9rem;
+      font-size: clamp(0.85rem, 2vw, 1rem);
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
       text-align: center;
-      line-height: 1.3;
     }
 
     .key-btn:hover { background: rgba(255,255,255,0.2); border-color: var(--accent); transform: scale(1.05); }
@@ -824,23 +794,17 @@
       background: rgba(255,230,109,0.3);
       border-color: var(--accent);
       color: var(--accent);
-      box-shadow: 0 0 12px rgba(255,230,109,0.3);
     }
 
-    .key-btn .key-num { font-size: 1.1rem; }
-    .key-btn .key-char { font-size: 0.8rem; opacity: 0.8; }
+    .key-btn .key-num { font-size: clamp(1rem, 2.5vw, 1.2rem); }
+    .key-btn .key-char { font-size: clamp(0.75rem, 1.8vw, 0.85rem); opacity: 0.8; }
 
-    .escape-actions {
-      display: flex;
-      gap: 12px;
-      width: 100%;
-      max-width: 400px;
-    }
+    .escape-actions { display: flex; gap: 12px; width: 100%; max-width: 420px; }
 
     .escape-submit-btn {
       flex: 1;
-      padding: 16px;
-      font-size: 1.1rem;
+      padding: clamp(14px, 3vw, 20px);
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
       font-weight: 800;
       border: none;
       border-radius: 14px;
@@ -851,11 +815,11 @@
       transition: all 0.2s;
     }
 
-    .escape-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,230,109,0.5); }
+    .escape-submit-btn:hover { transform: translateY(-2px); }
 
     .escape-clear-btn {
-      padding: 16px 20px;
-      font-size: 1rem;
+      padding: clamp(14px, 3vw, 20px) 20px;
+      font-size: clamp(0.9rem, 2vw, 1.05rem);
       font-weight: 700;
       border: 2px solid rgba(255,255,255,0.3);
       border-radius: 14px;
@@ -879,17 +843,15 @@
 
     .success-content {
       padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 20px;
       color: white;
     }
 
-    .success-emoji { font-size: 5rem; animation: bounceIn 0.8s ease; }
+    .success-emoji { font-size: clamp(4rem, 12vw, 6rem); animation: bounceIn 0.8s ease; }
 
     .success-title {
-      font-size: 2.5rem;
+      font-size: clamp(2rem, 6vw, 3rem);
       font-weight: 900;
       color: var(--accent);
       text-shadow: 0 0 30px rgba(255,230,109,0.6);
@@ -897,19 +859,19 @@
     }
 
     .success-msg {
-      font-size: 1rem;
+      font-size: clamp(0.95rem, 2.5vw, 1.1rem);
       line-height: 1.8;
-      max-width: 400px;
+      max-width: 480px;
       opacity: 0.9;
       background: rgba(255,255,255,0.1);
-      padding: 20px;
+      padding: 24px;
       border-radius: var(--radius);
       animation: fadeIn 0.8s ease 0.5s both;
     }
 
     .success-restart-btn {
-      padding: 18px 40px;
-      font-size: 1.2rem;
+      padding: clamp(16px, 3vw, 22px) 40px;
+      font-size: clamp(1.1rem, 3vw, 1.3rem);
       font-weight: 800;
       border: none;
       border-radius: var(--radius);
@@ -927,108 +889,23 @@
        Confetti 캔버스
     =========================== */
     #confettiCanvas {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       pointer-events: none;
       z-index: 9999;
     }
 
     /* ===========================
-       애니메이션
+       로딩
     =========================== */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.7); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes bounceIn {
-      0% { opacity: 0; transform: scale(0.3); }
-      50% { transform: scale(1.1); }
-      70% { transform: scale(0.95); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      15% { transform: translateX(-8px); }
-      30% { transform: translateX(8px); }
-      45% { transform: translateX(-6px); }
-      60% { transform: translateX(6px); }
-      75% { transform: translateX(-4px); }
-      90% { transform: translateX(4px); }
-    }
-
-    @keyframes starTwinkle {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
-    }
-
-    /* ===========================
-       반응형
-    =========================== */
-    @media (max-width: 400px) {
-      .rooms-grid { gap: 12px; }
-      .quiz-question { font-size: 1rem; }
-      .options-grid { grid-template-columns: 1fr; }
-      .escape-keypad { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-      .key-btn { padding: 10px 4px; font-size: 0.8rem; }
-      .code-slot { width: 50px; height: 60px; font-size: 1.3rem; }
-    }
-
-    @media (min-width: 600px) {
-      .rooms-grid { max-width: 560px; }
-      .match-area { grid-template-columns: 1fr 1fr; }
-    }
-
-    /* 설명 박스 */
-    .explanation-box {
-      background: #EEF2FF;
-      border-left: 4px solid var(--purple);
-      border-radius: 0 12px 12px 0;
-      padding: 12px 16px;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      color: #4a4a6a;
-      margin-top: 12px;
-    }
-
-    /* 오답 횟수 표시 */
-    .wrong-indicator {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .wrong-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #e9ecef;
-      transition: background 0.3s;
-    }
-
-    .wrong-dot.filled { background: var(--primary); }
-
-    /* 로딩 스피너 */
     .loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 16px;
-      font-size: 1.1rem;
-      color: #636e72;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 100vh; gap: 16px;
+      font-size: 1.1rem; color: #636e72;
     }
 
     .spinner {
-      width: 48px;
-      height: 48px;
+      width: 52px; height: 52px;
       border: 5px solid #e9ecef;
       border-top-color: var(--primary);
       border-radius: 50%;
@@ -1037,7 +914,7 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* 별 반짝임 */
+    /* 별 파티클 */
     .star {
       position: fixed;
       pointer-events: none;
@@ -1047,19 +924,77 @@
     }
 
     @keyframes starFloat {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-120px) scale(0.5); }
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-130px) scale(0.5); }
+    }
+
+    /* ===========================
+       애니메이션
+    =========================== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes bounceIn {
+      0%   { opacity: 0; transform: scale(0.3); }
+      50%  { transform: scale(1.1); }
+      70%  { transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      15%  { transform: translateX(-8px); }
+      30%  { transform: translateX(8px); }
+      45%  { transform: translateX(-6px); }
+      60%  { transform: translateX(6px); }
+      75%  { transform: translateX(-4px); }
+      90%  { transform: translateX(4px); }
+    }
+
+    /* ===========================
+       반응형 미디어 쿼리
+    =========================== */
+
+    /* 태블릿 (600px ~ 900px) */
+    @media (min-width: 600px) {
+      .rooms-grid { max-width: 560px; }
+      .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    }
+
+    /* 데스크탑 (900px+) */
+    @media (min-width: 900px) {
+      .rooms-grid { max-width: 600px; }
+      .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+      .match-content { max-width: 860px; }
+    }
+
+    /* 소형 모바일 (~ 400px) */
+    @media (max-width: 400px) {
+      .rooms-grid { gap: 10px; }
+      .options-grid { grid-template-columns: 1fr; }
+      .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+      .escape-keypad { gap: 6px; }
+      .code-slot { width: 48px; height: 56px; }
+    }
+
+    /* 아주 작은 화면 (~ 320px) */
+    @media (max-width: 320px) {
+      .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
     }
   </style>
 </head>
 <body>
 
-<!-- Confetti 캔버스 -->
 <canvas id="confettiCanvas"></canvas>
 
-<!-- ===========================
-     로딩 화면
-=========================== -->
+<!-- 로딩 화면 -->
 <div id="loadingScreen" class="loading">
   <div class="spinner"></div>
   <p>🎮 게임 불러오는 중...</p>
@@ -1083,21 +1018,17 @@
       <p>4개의 방을 모두 클리어하고 탈출하세요!</p>
     </div>
 
-    <div class="rooms-grid" id="roomsGrid">
-      <!-- 방 카드들이 JS로 생성됩니다 -->
-    </div>
+    <div class="rooms-grid" id="roomsGrid"></div>
 
     <div class="escape-section">
       <div class="hint-counter" id="hintCounterMain">💡 힌트 남은 횟수: <strong id="hintRemainMain">3</strong>회</div>
-      <button class="escape-btn" id="escapeBtn" disabled>
-        🚪 방탈출 도전!
-      </button>
+      <button class="escape-btn" id="escapeBtn" disabled>🚪 방탈출 도전!</button>
     </div>
   </div>
 </div>
 
 <!-- ===========================
-     퀴즈 화면 (1, 2, 3번방)
+     퀴즈 화면 (1·2·3번방)
 =========================== -->
 <div id="quizScreen" class="screen">
   <div class="header">
@@ -1109,12 +1040,11 @@
   </div>
 
   <div class="quiz-content">
-    <!-- 진행도 -->
     <div class="progress-section">
       <div class="progress-info">
         <span id="progressText">0 / 0</span>
         <div class="wrong-indicator" id="wrongIndicator">
-          <span style="font-size:0.8rem; color:#636e72;">오답:</span>
+          <span style="font-size:0.85rem; color:#636e72; font-weight:600;">오답:</span>
           <div class="wrong-dot" id="dot1"></div>
           <div class="wrong-dot" id="dot2"></div>
           <div class="wrong-dot" id="dot3"></div>
@@ -1125,7 +1055,6 @@
       </div>
     </div>
 
-    <!-- 퀴즈 카드 -->
     <div class="quiz-card" id="quizCard">
       <span class="quiz-type-badge" id="quizTypeBadge">4지선다</span>
       <div class="quiz-question" id="quizQuestion">문제 로딩 중...</div>
@@ -1135,7 +1064,7 @@
 </div>
 
 <!-- ===========================
-     카드 매칭 화면 (4번방)
+     4번방 - 메모리 카드 게임
 =========================== -->
 <div id="matchScreen" class="screen">
   <div class="header">
@@ -1150,23 +1079,19 @@
     <div class="match-info">
       <span>🃏 매칭 진행: <strong id="matchProgress">0 / 8</strong></span>
       <div class="wrong-indicator" id="matchWrongIndicator">
-        <span style="font-size:0.8rem; color:#636e72;">오답:</span>
+        <span style="font-size:0.85rem; color:#636e72; font-weight:600;">오답:</span>
         <div class="wrong-dot" id="mdot1"></div>
         <div class="wrong-dot" id="mdot2"></div>
         <div class="wrong-dot" id="mdot3"></div>
       </div>
     </div>
 
-    <div class="match-area">
-      <div class="match-column">
-        <h3>📝 문제 카드</h3>
-        <div class="match-cards" id="questionCards"></div>
-      </div>
-      <div class="match-column">
-        <h3>🖼️ 정답 카드</h3>
-        <div class="match-cards" id="imageCards"></div>
-      </div>
+    <div class="match-guide">
+      💡 <strong>?</strong> 카드를 선택한 후, 맞는 그림 카드를 골라 연결하세요!
     </div>
+
+    <!-- 16개 카드가 랜덤 배치되는 그리드 -->
+    <div class="memory-grid" id="memoryGrid"></div>
   </div>
 </div>
 
@@ -1186,13 +1111,8 @@
       <p>순서대로 4개의 암호를 입력하세요</p>
     </div>
 
-    <div class="escape-input-display" id="codeDisplay">
-      <!-- 코드 슬롯 JS로 생성 -->
-    </div>
-
-    <div class="escape-keypad" id="escapeKeypad">
-      <!-- 키패드 버튼 JS로 생성 -->
-    </div>
+    <div class="escape-input-display" id="codeDisplay"></div>
+    <div class="escape-keypad" id="escapeKeypad"></div>
 
     <div class="escape-actions">
       <button class="escape-clear-btn" id="escapeClearBtn">← 지우기</button>
@@ -1224,22 +1144,17 @@
 //  GitHub Pages 배포용 | ES6 | 단일 HTML
 // ============================================================
 
-// ===========================
-// 상수 & 설정
-// ===========================
-const IMAGE_BASE = 'images/';
-const DATA_URL = 'data/quizData.json';
-const STORAGE_KEY = 'financeEscapeGame_v2';
+const IMAGE_BASE  = 'images/';
+const DATA_URL    = 'data/quizData.json';
+const STORAGE_KEY = 'financeEscapeGame_v3';
 
-/** 방 설정 */
 const ROOM_CONFIG = {
-  room1: { id: 1, name: '1번방 - 4지선다', type: 'mcq',     image: '1.png', finalImage: 'L1.png', code: 6,  finalQ: '다음 이미지에서 스마트폰 페이는 화폐발달의 몇번째 단계일까요?', finalHint: '이미지를 잘 살펴보세요. 화폐의 발달 순서를 세어보세요!' },
-  room2: { id: 2, name: '2번방 - OX퀴즈',  type: 'ox',      image: '2.png', finalImage: 'L2.png', code: 3,  finalQ: '용돈의 일부를 매월 정기OO 할 거에요에서 들어가 단어는 몇 번일까요?', finalHint: '이미지의 단어 목록에서 "정기적금"을 찾아 몇 번째인지 세어보세요!' },
+  room1: { id: 1, name: '1번방 - 4지선다',  type: 'mcq',     image: '1.png', finalImage: 'L1.png', code: 6,  finalQ: '다음 이미지에서 스마트폰 페이는 화폐발달의 몇번째 단계일까요?',                           finalHint: '이미지를 잘 살펴보세요. 화폐의 발달 순서를 세어보세요!' },
+  room2: { id: 2, name: '2번방 - OX퀴즈',   type: 'ox',      image: '2.png', finalImage: 'L2.png', code: 3,  finalQ: '용돈의 일부를 매월 정기OO 할 거에요에서 들어가 단어는 몇 번일까요?',                    finalHint: '이미지의 단어 목록에서 "정기적금"을 찾아 몇 번째인지 세어보세요!' },
   room3: { id: 3, name: '3번방 - 초성퀴즈', type: 'initial', image: '3.png', finalImage: 'L3.png', code: 15, finalQ: '용돈 5만원으로 살수 있는 물건의 총합을 (가방은 꼭 필요해요!) 구하고 각 숫자를 더해주세요', finalHint: '가방은 필수! 5만원 안에서 살 수 있는 물건들의 가격 숫자를 모두 더해보세요.' },
   room4: { id: 4, name: '4번방 - 카드매칭', type: 'match',   image: '4.png', finalImage: null,     code: 2,  finalQ: null }
 };
 
-/** 방탈출 키패드 버튼 */
 const KEYPAD_BUTTONS = [
   { num: 1,  char: '금' }, { num: 2,  char: '활' }, { num: 3,  char: '제' }, { num: 4,  char: '융' },
   { num: 5,  char: '사' }, { num: 6,  char: '경' }, { num: 7,  char: '투' }, { num: 8,  char: '자' },
@@ -1247,37 +1162,35 @@ const KEYPAD_BUTTONS = [
   { num: 13, char: '축' }, { num: 14, char: '신' }, { num: 15, char: '생' }, { num: 16, char: '여' }
 ];
 
-/** 정답 코드 순서 */
 const CORRECT_CODES = [6, 3, 15, 2];
 
 // ===========================
 // 게임 상태
 // ===========================
 let gameState = {
-  clearedRooms: {},    // { room1: true, ... }
-  codes: {},           // { room1: 6, ... }
-  hintsUsed: 0,        // 전체 힌트 사용 횟수
+  clearedRooms: {},
+  codes: {},
+  hintsUsed: 0,
   currentRoom: null,
-  // 현재 방 내부 상태
   currentQuizIndex: 0,
   currentQuizList: [],
   wrongCount: 0,
   isLocked: false,
   matchState: {
-    selectedQ: null,
+    selectedCard: null,   // { el, type, id }
     matched: [],
     wrongCount: 0
   }
 };
 
 let quizData = null;
-let isTransitioning = false; // 화면 전환 중 중복 클릭 방지
+let isTransitioning = false;
+let modalActive = false;
 
 // ===========================
-// 유틸리티 함수
+// 유틸리티
 // ===========================
 
-/** 배열 셔플 (Fisher-Yates) */
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -1287,7 +1200,6 @@ function shuffle(arr) {
   return a;
 }
 
-/** localStorage 저장 */
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -1295,88 +1207,75 @@ function saveState() {
       codes: gameState.codes,
       hintsUsed: gameState.hintsUsed
     }));
-  } catch (e) {
-    console.warn('저장 실패:', e);
-  }
+  } catch (e) {}
 }
 
-/** localStorage 복원 */
 function loadState() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      const data = JSON.parse(saved);
-      gameState.clearedRooms = data.clearedRooms || {};
-      gameState.codes = data.codes || {};
-      gameState.hintsUsed = data.hintsUsed || 0;
+      const d = JSON.parse(saved);
+      gameState.clearedRooms = d.clearedRooms || {};
+      gameState.codes        = d.codes        || {};
+      gameState.hintsUsed    = d.hintsUsed    || 0;
     }
-  } catch (e) {
-    console.warn('복원 실패:', e);
-  }
+  } catch (e) {}
 }
 
-/** 화면 전환 */
-function showScreen(screenId) {
+function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const target = document.getElementById(screenId);
-  if (target) target.classList.add('active');
+  const t = document.getElementById(id);
+  if (t) t.classList.add('active');
 }
 
-/** 요소 흔들기 애니메이션 */
 function shakeElement(el) {
   el.classList.remove('wrong-shake');
-  void el.offsetWidth; // reflow
+  void el.offsetWidth;
   el.classList.add('wrong-shake');
   setTimeout(() => el.classList.remove('wrong-shake'), 600);
 }
 
-/** 별 파티클 생성 */
 function spawnStars(count = 8) {
   for (let i = 0; i < count; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.textContent = ['⭐', '🌟', '✨', '💫'][Math.floor(Math.random() * 4)];
-    star.style.left = Math.random() * 100 + 'vw';
-    star.style.top = Math.random() * 60 + 20 + 'vh';
-    star.style.animationDelay = Math.random() * 0.5 + 's';
-    document.body.appendChild(star);
-    setTimeout(() => star.remove(), 2500);
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.textContent = ['⭐','🌟','✨','💫'][Math.floor(Math.random() * 4)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top  = Math.random() * 60 + 20 + 'vh';
+    s.style.animationDelay = Math.random() * 0.5 + 's';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 2500);
   }
 }
 
 // ===========================
-// Confetti 애니메이션
+// Confetti
 // ===========================
 let confettiActive = false;
-let confettiParticles = [];
 
 function startConfetti(duration = 4000) {
   const canvas = document.getElementById('confettiCanvas');
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
+  canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
   confettiActive = true;
-  confettiParticles = [];
 
-  const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#A29BFE', '#55EFC4', '#FDCB6E', '#FD79A8'];
-  for (let i = 0; i < 150; i++) {
-    confettiParticles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height - canvas.height,
-      w: Math.random() * 12 + 6,
-      h: Math.random() * 6 + 4,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      speed: Math.random() * 3 + 2,
-      angle: Math.random() * Math.PI * 2,
-      spin: (Math.random() - 0.5) * 0.2,
-      wobble: Math.random() * 0.1
-    });
-  }
+  const colors = ['#FF6B6B','#4ECDC4','#FFE66D','#A29BFE','#55EFC4','#FDCB6E','#FD79A8'];
+  const particles = Array.from({ length: 160 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    w: Math.random() * 12 + 6,
+    h: Math.random() * 6 + 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    speed: Math.random() * 3 + 2,
+    angle: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.2
+  }));
 
   function draw() {
     if (!confettiActive) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    confettiParticles.forEach(p => {
+    particles.forEach(p => {
       p.y += p.speed;
       p.angle += p.spin;
       p.x += Math.sin(p.angle) * 2;
@@ -1395,10 +1294,8 @@ function startConfetti(duration = 4000) {
 }
 
 // ===========================
-// 오답 잠금 시스템
+// 오답 잠금
 // ===========================
-
-/** 3초 입력 잠금 및 카운트다운 표시 */
 function lockInput(callback) {
   if (gameState.isLocked) return;
   gameState.isLocked = true;
@@ -1412,8 +1309,7 @@ function lockInput(callback) {
       <h3>잠시 생각해보세요!</h3>
       <p>오답이에요. 다시 한번 생각해봐요!</p>
       <div class="lock-countdown" id="lockCountdown">3</div>
-    </div>
-  `;
+    </div>`;
   document.body.appendChild(overlay);
 
   let count = 3;
@@ -1432,27 +1328,26 @@ function lockInput(callback) {
 }
 
 // ===========================
-// 힌트 시스템
+// 힌트
 // ===========================
-
 function showHint(roomKey) {
   const maxHints = 3;
   if (gameState.hintsUsed >= maxHints) {
-    showModal({ title: '💡 힌트 소진', message: '힌트를 모두 사용했어요! 스스로 생각해봐요 💪' });
+    showModal({ title: '💡 힌트 소진', message: '힌트를 모두 사용했어요!', confirmText: '확인', onConfirm: () => {} });
     return;
   }
   const config = ROOM_CONFIG[roomKey];
-  let hintText = '';
-  const roomNum = config.id;
-  if (roomNum === 1) hintText = '4개의 보기 중 정답을 잘 생각해보세요. 금융 개념을 떠올려봐요!';
-  else if (roomNum === 2) hintText = 'O(맞다) 또는 X(틀리다)로 답해요. 일상생활에서 생각해봐요!';
-  else if (roomNum === 3) hintText = '초성을 보고 단어를 완성해봐요. 금융 관련 단어예요!';
-  else hintText = '문제 카드를 클릭해서 문제를 읽고, 맞는 이미지 카드를 선택해요!';
-
+  const hint = config.finalHint || '문제를 잘 읽어보세요!';
   gameState.hintsUsed++;
   saveState();
   updateHintDisplay();
-  showModal({ title: `💡 힌트 (${maxHints - gameState.hintsUsed}회 남음)`, message: hintText });
+
+  showModal({
+    title: `💡 힌트 (${maxHints - gameState.hintsUsed}회 남음)`,
+    message: hint,
+    confirmText: '확인',
+    onConfirm: () => {}
+  });
 }
 
 function updateHintDisplay() {
@@ -1462,15 +1357,8 @@ function updateHintDisplay() {
 }
 
 // ===========================
-// 모달 시스템
+// 모달
 // ===========================
-
-let modalActive = false;
-
-/**
- * 범용 모달 표시
- * @param {Object} opts - { title, message, image, inputPlaceholder, onConfirm, confirmText, cancelText, onCancel }
- */
 function showModal(opts) {
   if (modalActive) return;
   modalActive = true;
@@ -1478,32 +1366,39 @@ function showModal(opts) {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
 
-  let imgHtml = opts.image ? `<img src="${IMAGE_BASE}${opts.image}" class="modal-img" alt="퀴즈 이미지" onerror="this.style.display='none'">` : '';
-  let inputHtml = opts.inputPlaceholder ? `<input type="number" class="modal-input" id="modalInput" placeholder="${opts.inputPlaceholder}" inputmode="numeric">` : '';
-  let cancelHtml = opts.cancelText ? `<button class="modal-btn secondary" id="modalCancel">${opts.cancelText}</button>` : '';
+  let imgHtml = '';
+  if (opts.image) {
+    imgHtml = `<img src="${IMAGE_BASE}${opts.image}" class="modal-img" alt="이미지" onerror="this.style.display='none'">`;
+  }
+
+  let inputHtml = '';
+  if (opts.inputPlaceholder) {
+    inputHtml = `<input type="number" class="modal-input" id="modalInput" placeholder="${opts.inputPlaceholder}" inputmode="numeric">`;
+  }
+
+  let cancelHtml = '';
+  if (opts.cancelText) {
+    cancelHtml = `<button class="modal-btn secondary" id="modalCancel">${opts.cancelText}</button>`;
+  }
 
   overlay.innerHTML = `
     <div class="modal-box">
-      <h2>${opts.title || ''}</h2>
+      <h2>${opts.title}</h2>
       ${imgHtml}
       <p>${opts.message || ''}</p>
       ${inputHtml}
       <button class="modal-btn primary" id="modalConfirm">${opts.confirmText || '확인'}</button>
       ${cancelHtml}
-    </div>
-  `;
-
+    </div>`;
   document.body.appendChild(overlay);
 
+  const input      = overlay.querySelector('#modalInput');
   const confirmBtn = overlay.querySelector('#modalConfirm');
-  const cancelBtn = overlay.querySelector('#modalCancel');
-  const input = overlay.querySelector('#modalInput');
+  const cancelBtn  = overlay.querySelector('#modalCancel');
 
   if (input) {
     input.focus();
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') confirmBtn.click();
-    });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') confirmBtn.click(); });
   }
 
   confirmBtn.addEventListener('click', () => {
@@ -1525,7 +1420,6 @@ function showModal(opts) {
 // ===========================
 // 메인 화면
 // ===========================
-
 function renderMainScreen() {
   const grid = document.getElementById('roomsGrid');
   grid.innerHTML = '';
@@ -1536,27 +1430,22 @@ function renderMainScreen() {
     card.dataset.room = key;
 
     if (gameState.clearedRooms[key]) {
-      // 클리어된 방
       card.classList.add('cleared');
       card.innerHTML = `
         <div class="cleared-display">
           <span class="code-number">${config.code}</span>
           <span class="cleared-label">✅ 클리어!</span>
-        </div>
-      `;
+        </div>`;
     } else {
-      // 미클리어 방
       card.innerHTML = `
-        <img src="${IMAGE_BASE}${config.image}" alt="${config.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2230%22>${config.id}번방</text></svg>'">
-        <div class="room-label">${config.name}</div>
-      `;
+        <img src="${IMAGE_BASE}${config.image}" alt="${config.name}"
+          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2230%22>${config.id}번방</text></svg>'">
+        <div class="room-label">${config.name}</div>`;
       card.addEventListener('click', () => startRoom(key));
     }
-
     grid.appendChild(card);
   });
 
-  // 방탈출 버튼 상태
   const allCleared = Object.keys(ROOM_CONFIG).every(k => gameState.clearedRooms[k]);
   const escapeBtn = document.getElementById('escapeBtn');
   escapeBtn.disabled = !allCleared;
@@ -1569,12 +1458,11 @@ function renderMainScreen() {
 // ===========================
 // 방 시작
 // ===========================
-
 function startRoom(roomKey) {
   if (isTransitioning) return;
   const config = ROOM_CONFIG[roomKey];
   gameState.currentRoom = roomKey;
-  gameState.wrongCount = 0;
+  gameState.wrongCount  = 0;
   updateWrongDots(0, 'quiz');
 
   if (config.type === 'match') {
@@ -1585,21 +1473,18 @@ function startRoom(roomKey) {
 }
 
 // ===========================
-// 퀴즈 방 (1, 2, 3번방)
+// 퀴즈 방 (1·2·3번방)
 // ===========================
-
 function startQuizRoom(roomKey) {
-  const config = ROOM_CONFIG[roomKey];
+  const config  = ROOM_CONFIG[roomKey];
   const rawList = quizData[roomKey];
   if (!rawList || rawList.length === 0) {
     showModal({ title: '오류', message: '퀴즈 데이터를 불러올 수 없어요.' });
     return;
   }
-
-  // 문제 셔플
-  gameState.currentQuizList = shuffle(rawList);
+  gameState.currentQuizList  = shuffle(rawList);
   gameState.currentQuizIndex = 0;
-  gameState.wrongCount = 0;
+  gameState.wrongCount       = 0;
 
   document.getElementById('quizRoomTitle').textContent = config.name;
   showScreen('quizScreen');
@@ -1608,70 +1493,69 @@ function startQuizRoom(roomKey) {
 
 function renderCurrentQuiz() {
   const roomKey = gameState.currentRoom;
-  const config = ROOM_CONFIG[roomKey];
-  const list = gameState.currentQuizList;
-  const idx = gameState.currentQuizIndex;
-  const total = list.length;
+  const config  = ROOM_CONFIG[roomKey];
+  const list    = gameState.currentQuizList;
+  const idx     = gameState.currentQuizIndex;
+  const total   = list.length;
 
-  // 진행도 업데이트
   document.getElementById('progressText').textContent = `${idx} / ${total}`;
   document.getElementById('progressFill').style.width = `${(idx / total) * 100}%`;
 
-  if (idx >= total) {
-    // 모든 퀴즈 통과 → 최종 퀴즈
-    showFinalQuiz(roomKey);
-    return;
-  }
+  if (idx >= total) { showFinalQuiz(roomKey); return; }
 
-  const quiz = list[idx];
-  const badge = document.getElementById('quizTypeBadge');
-  const question = document.getElementById('quizQuestion');
-  const options = document.getElementById('quizOptions');
+  const quiz    = list[idx];
+  const badge   = document.getElementById('quizTypeBadge');
+  const qEl     = document.getElementById('quizQuestion');
 
   if (config.type === 'mcq') {
     badge.textContent = '4지선다';
-    question.textContent = quiz.question;
+    qEl.textContent   = quiz.question;
     renderMCQOptions(quiz);
   } else if (config.type === 'ox') {
     badge.textContent = 'O / X 퀴즈';
-    question.textContent = quiz.question;
+    qEl.textContent   = quiz.question;
     renderOXOptions(quiz);
   } else if (config.type === 'initial') {
     badge.textContent = '초성 퀴즈';
-    question.textContent = quiz.question;
+    qEl.textContent   = quiz.question;
     renderInitialInput(quiz);
   }
 }
 
-/** 4지선다 렌더링 */
 function renderMCQOptions(quiz) {
   const container = document.getElementById('quizOptions');
-  const shuffledOptions = shuffle(quiz.options);
-  container.innerHTML = `<div class="options-grid"></div>`;
+  const opts      = shuffle(quiz.options);
+  container.innerHTML = '<div class="options-grid"></div>';
   const grid = container.querySelector('.options-grid');
 
-  shuffledOptions.forEach(opt => {
+  opts.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'option-btn';
+    btn.className   = 'option-btn';
     btn.textContent = opt;
-    btn.addEventListener('click', () => handleMCQAnswer(btn, opt, String(quiz.answer), quiz.explanation, shuffledOptions));
+    btn.addEventListener('click', () => handleMCQAnswer(btn, opt, String(quiz.answer), quiz.explanation));
     grid.appendChild(btn);
   });
 }
 
-function handleMCQAnswer(btn, selected, answer, explanation, allOptions) {
+function handleMCQAnswer(btn, selected, answer, explanation) {
   if (gameState.isLocked) return;
   const isCorrect = String(selected) === String(answer);
 
   if (isCorrect) {
     btn.classList.add('correct');
     disableAllOptions();
+    if (explanation) {
+      const box = document.createElement('div');
+      box.className = 'explanation-box';
+      box.textContent = '💡 ' + explanation;
+      document.getElementById('quizCard').appendChild(box);
+    }
     setTimeout(() => {
       gameState.currentQuizIndex++;
       gameState.wrongCount = 0;
       updateWrongDots(0, 'quiz');
       renderCurrentQuiz();
-    }, 800);
+    }, 900);
   } else {
     btn.classList.add('wrong');
     shakeElement(btn);
@@ -1680,11 +1564,10 @@ function handleMCQAnswer(btn, selected, answer, explanation, allOptions) {
 
     if (gameState.wrongCount >= 3) {
       lockInput(() => {
-        // 3회 오답 → 처음부터
-        gameState.wrongCount = 0;
-        updateWrongDots(0, 'quiz');
+        gameState.wrongCount       = 0;
         gameState.currentQuizIndex = 0;
-        gameState.currentQuizList = shuffle(quizData[gameState.currentRoom]);
+        gameState.currentQuizList  = shuffle(quizData[gameState.currentRoom]);
+        updateWrongDots(0, 'quiz');
         renderCurrentQuiz();
       });
     } else {
@@ -1696,15 +1579,13 @@ function handleMCQAnswer(btn, selected, answer, explanation, allOptions) {
   }
 }
 
-/** OX 렌더링 */
 function renderOXOptions(quiz) {
   const container = document.getElementById('quizOptions');
   container.innerHTML = `
     <div class="ox-grid">
       <button class="ox-btn o-btn" id="oBtn">⭕</button>
       <button class="ox-btn x-btn" id="xBtn">❌</button>
-    </div>
-  `;
+    </div>`;
   container.querySelector('#oBtn').addEventListener('click', () => handleOXAnswer('O', quiz));
   container.querySelector('#xBtn').addEventListener('click', () => handleOXAnswer('X', quiz));
 }
@@ -1718,12 +1599,18 @@ function handleOXAnswer(selected, quiz) {
     btn.classList.add('correct');
     document.getElementById('oBtn').disabled = true;
     document.getElementById('xBtn').disabled = true;
+    if (quiz.explanation) {
+      const box = document.createElement('div');
+      box.className = 'explanation-box';
+      box.textContent = '💡 ' + quiz.explanation;
+      document.getElementById('quizCard').appendChild(box);
+    }
     setTimeout(() => {
       gameState.currentQuizIndex++;
       gameState.wrongCount = 0;
       updateWrongDots(0, 'quiz');
       renderCurrentQuiz();
-    }, 800);
+    }, 900);
   } else {
     btn.classList.add('wrong');
     shakeElement(btn);
@@ -1732,10 +1619,10 @@ function handleOXAnswer(selected, quiz) {
 
     if (gameState.wrongCount >= 3) {
       lockInput(() => {
-        gameState.wrongCount = 0;
-        updateWrongDots(0, 'quiz');
+        gameState.wrongCount       = 0;
         gameState.currentQuizIndex = 0;
-        gameState.currentQuizList = shuffle(quizData[gameState.currentRoom]);
+        gameState.currentQuizList  = shuffle(quizData[gameState.currentRoom]);
+        updateWrongDots(0, 'quiz');
         renderCurrentQuiz();
       });
     } else {
@@ -1744,7 +1631,6 @@ function handleOXAnswer(selected, quiz) {
   }
 }
 
-/** 초성퀴즈 렌더링 */
 function renderInitialInput(quiz) {
   const container = document.getElementById('quizOptions');
   container.innerHTML = `
@@ -1752,17 +1638,16 @@ function renderInitialInput(quiz) {
       <input type="text" class="quiz-input" id="initialInput" placeholder="정답을 입력하세요" autocomplete="off">
       <button class="submit-btn" id="initialSubmit">✅ 제출</button>
       <button class="hint-btn" id="initialHint">💡 힌트 보기 (${3 - gameState.hintsUsed}회 남음)</button>
-    </div>
-  `;
+    </div>`;
 
-  const input = container.querySelector('#initialInput');
+  const input     = container.querySelector('#initialInput');
   const submitBtn = container.querySelector('#initialSubmit');
-  const hintBtn = container.querySelector('#initialHint');
+  const hintBtn   = container.querySelector('#initialHint');
 
   input.focus();
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitBtn.click(); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); });
   submitBtn.addEventListener('click', () => handleInitialAnswer(input, quiz));
-  hintBtn.addEventListener('click', () => showHint(gameState.currentRoom));
+  hintBtn.addEventListener('click',   () => showHint(gameState.currentRoom));
 }
 
 function handleInitialAnswer(input, quiz) {
@@ -1776,12 +1661,18 @@ function handleInitialAnswer(input, quiz) {
     input.classList.add('correct');
     input.disabled = true;
     document.getElementById('initialSubmit').disabled = true;
+    if (quiz.explanation) {
+      const box = document.createElement('div');
+      box.className = 'explanation-box';
+      box.textContent = '💡 ' + quiz.explanation;
+      document.getElementById('quizCard').appendChild(box);
+    }
     setTimeout(() => {
       gameState.currentQuizIndex++;
       gameState.wrongCount = 0;
       updateWrongDots(0, 'quiz');
       renderCurrentQuiz();
-    }, 800);
+    }, 900);
   } else {
     input.classList.add('wrong');
     shakeElement(input);
@@ -1790,10 +1681,10 @@ function handleInitialAnswer(input, quiz) {
 
     if (gameState.wrongCount >= 3) {
       lockInput(() => {
-        gameState.wrongCount = 0;
-        updateWrongDots(0, 'quiz');
+        gameState.wrongCount       = 0;
         gameState.currentQuizIndex = 0;
-        gameState.currentQuizList = shuffle(quizData[gameState.currentRoom]);
+        gameState.currentQuizList  = shuffle(quizData[gameState.currentRoom]);
+        updateWrongDots(0, 'quiz');
         renderCurrentQuiz();
       });
     } else {
@@ -1806,26 +1697,21 @@ function handleInitialAnswer(input, quiz) {
   }
 }
 
-/** 모든 옵션 비활성화 */
 function disableAllOptions() {
-  document.querySelectorAll('.option-btn, .ox-btn, #initialSubmit').forEach(btn => btn.disabled = true);
+  document.querySelectorAll('.option-btn, .ox-btn, #initialSubmit').forEach(b => b.disabled = true);
 }
 
-/** 오답 점 업데이트 */
 function updateWrongDots(count, type) {
   const prefix = type === 'quiz' ? '' : 'm';
   for (let i = 1; i <= 3; i++) {
     const dot = document.getElementById(`${prefix}dot${i}`);
-    if (dot) {
-      dot.classList.toggle('filled', i <= count);
-    }
+    if (dot) dot.classList.toggle('filled', i <= count);
   }
 }
 
 // ===========================
 // 최종 퀴즈 (팝업)
 // ===========================
-
 function showFinalQuiz(roomKey) {
   const config = ROOM_CONFIG[roomKey];
 
@@ -1840,7 +1726,6 @@ function showFinalQuiz(roomKey) {
       if (String(val).trim() === String(config.code)) {
         handleRoomClear(roomKey);
       } else {
-        // 오답
         setTimeout(() => {
           showModal({
             title: '❌ 틀렸어요!',
@@ -1855,35 +1740,25 @@ function showFinalQuiz(roomKey) {
   });
 }
 
-/** 방 클리어 처리 */
 function handleRoomClear(roomKey) {
   const config = ROOM_CONFIG[roomKey];
   gameState.clearedRooms[roomKey] = true;
-  gameState.codes[roomKey] = config.code;
+  gameState.codes[roomKey]        = config.code;
   saveState();
-
   spawnStars(12);
 
   showModal({
     title: '🎉 방 클리어!',
-    message: `
-      <div class="code-reveal">
-        <span class="code-big">${config.code}</span>
-        <p>암호를 획득했어요!</p>
-      </div>
-    `,
+    message: `<div class="code-reveal"><span class="code-big">${config.code}</span><p>암호를 획득했어요!</p></div>`,
     confirmText: '🏠 홈으로',
-    onConfirm: () => {
-      showScreen('mainScreen');
-      renderMainScreen();
-    }
+    onConfirm: () => { showScreen('mainScreen'); renderMainScreen(); }
   });
 }
 
 // ===========================
-// 카드 매칭 (4번방)
+// 4번방 - 메모리 카드 게임
+// 문제(?) 8장 + 이미지 8장 = 16장 랜덤 배치
 // ===========================
-
 function startMatchRoom() {
   const matchData = quizData['room4'];
   if (!matchData || matchData.length === 0) {
@@ -1892,156 +1767,179 @@ function startMatchRoom() {
   }
 
   gameState.matchState = {
-    selectedQ: null,
+    selectedCard: null,
     matched: [],
     wrongCount: 0
   };
 
   showScreen('matchScreen');
-  renderMatchCards(matchData);
+  renderMemoryGrid(matchData);
   updateMatchProgress();
 }
 
-function renderMatchCards(matchData) {
-  const qContainer = document.getElementById('questionCards');
-  const iContainer = document.getElementById('imageCards');
-  qContainer.innerHTML = '';
-  iContainer.innerHTML = '';
+function renderMemoryGrid(matchData) {
+  const grid = document.getElementById('memoryGrid');
+  grid.innerHTML = '';
 
-  // 문제 카드 (셔플)
-  const shuffledQ = shuffle(matchData);
-  shuffledQ.forEach((item, i) => {
-    const card = document.createElement('div');
-    card.className = 'q-card';
-    card.dataset.id = item.id;
-    card.dataset.answer = item.answer;
-    card.textContent = `Q${i + 1}`;
-    card.addEventListener('click', () => handleQCardClick(card, item));
-    qContainer.appendChild(card);
+  // 문제 카드 8장 + 이미지 카드 8장 = 16장 생성
+  const cards = [];
+
+  matchData.forEach((item) => {
+    // 문제 카드: ? 표시
+    cards.push({ type: 'q', id: item.id, answer: item.answer, question: item.question });
+    // 이미지 카드
+    cards.push({ type: 'img', id: item.id, answer: item.answer });
   });
 
-  // 이미지 카드 (셔플)
-  const shuffledI = shuffle(matchData);
-  shuffledI.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'img-card';
-    card.dataset.imgId = item.answer;
-    card.innerHTML = `<img src="${IMAGE_BASE}matching/${item.answer}.png" alt="${item.answer}" onerror="this.parentElement.innerHTML='<span style=\\'padding:10px;font-size:0.8rem;\\'>${item.answer}</span>'">`;
-    card.addEventListener('click', () => handleImgCardClick(card));
-    iContainer.appendChild(card);
-  });
-}
+  // 16장 랜덤 셔플
+  const shuffled = shuffle(cards);
 
-function handleQCardClick(card, item) {
-  if (gameState.isLocked) return;
-  if (card.classList.contains('matched')) return;
-  if (isTransitioning) return;
+  shuffled.forEach(cardData => {
+    const el = document.createElement('div');
+    el.className = 'mem-card';
+    el.dataset.id   = cardData.id;
+    el.dataset.type = cardData.type;
 
-  // 이전 선택 해제
-  document.querySelectorAll('.q-card.selected').forEach(c => c.classList.remove('selected'));
+    if (cardData.type === 'q') {
+      el.classList.add('q-type');
+      el.innerHTML = `<div class="card-inner">?</div>`;
+      el.addEventListener('click', () => handleMemCardClick(el, cardData));
+    } else {
+      el.classList.add('img-type');
+      el.innerHTML = `
+        <div class="card-inner">
+          <img src="${IMAGE_BASE}matching/${cardData.answer}.png" alt="${cardData.answer}"
+            onerror="this.parentElement.innerHTML='<span style=\\'font-size:0.75rem;padding:6px;text-align:center;\\'>${cardData.answer}</span>'">
+        </div>`;
+      el.addEventListener('click', () => handleMemCardClick(el, cardData));
+    }
 
-  card.classList.add('selected');
-  gameState.matchState.selectedQ = { card, item };
-
-  // 문제 팝업 표시
-  showModal({
-    title: `📝 ${card.textContent}`,
-    message: item.question,
-    confirmText: '닫기',
-    onConfirm: () => {}
+    grid.appendChild(el);
   });
 }
 
-function handleImgCardClick(imgCard) {
+function handleMemCardClick(el, cardData) {
   if (gameState.isLocked) return;
-  if (imgCard.classList.contains('matched')) return;
+  if (el.classList.contains('matched')) return;
   if (isTransitioning) return;
 
-  const selected = gameState.matchState.selectedQ;
-  if (!selected) {
-    showModal({ title: '💡 안내', message: '먼저 왼쪽에서 문제 카드를 선택하세요!', confirmText: '확인', onConfirm: () => {} });
+  const ms = gameState.matchState;
+
+  // 이미 선택된 카드 다시 클릭 → 선택 해제
+  if (ms.selectedCard && ms.selectedCard.el === el) {
+    el.classList.remove('selected');
+    ms.selectedCard = null;
     return;
   }
 
-  const isCorrect = imgCard.dataset.imgId === selected.item.answer;
+  // 첫 번째 선택 없음 → 선택
+  if (!ms.selectedCard) {
+    el.classList.add('selected');
+    ms.selectedCard = { el, cardData };
+
+    // 문제 카드 선택 시 문제 내용 팝업
+    if (cardData.type === 'q') {
+      showModal({
+        title: '📝 문제',
+        message: cardData.question,
+        confirmText: '닫기',
+        onConfirm: () => {}
+      });
+    }
+    return;
+  }
+
+  // 두 번째 선택
+  const first  = ms.selectedCard;
+  const second = { el, cardData };
+
+  // 같은 타입끼리 선택 → 두 번째를 새 선택으로 교체
+  if (first.cardData.type === second.cardData.type) {
+    first.el.classList.remove('selected');
+    el.classList.add('selected');
+    ms.selectedCard = second;
+
+    if (cardData.type === 'q') {
+      showModal({
+        title: '📝 문제',
+        message: cardData.question,
+        confirmText: '닫기',
+        onConfirm: () => {}
+      });
+    }
+    return;
+  }
+
+  // 서로 다른 타입 (q + img) → 매칭 판정
+  el.classList.add('selected');
+  ms.selectedCard = null;
+
+  const isCorrect = first.cardData.id === second.cardData.id;
 
   if (isCorrect) {
-    // 매칭 성공
-    selected.card.classList.remove('selected');
-    selected.card.classList.add('matched');
-    selected.card.textContent = '✅ ' + selected.card.textContent;
-    imgCard.classList.add('matched');
+    first.el.classList.remove('selected');
+    second.el.classList.remove('selected');
+    first.el.classList.add('matched');
+    second.el.classList.add('matched');
 
-    gameState.matchState.matched.push(selected.item.id);
-    gameState.matchState.selectedQ = null;
-    gameState.matchState.wrongCount = 0;
+    ms.matched.push(first.cardData.id);
+    ms.wrongCount = 0;
     updateWrongDots(0, 'match');
     updateMatchProgress();
-
     spawnStars(4);
 
-    // 모두 매칭 완료?
-    if (gameState.matchState.matched.length === quizData['room4'].length) {
+    if (ms.matched.length === quizData['room4'].length) {
       setTimeout(() => handleMatchComplete(), 600);
     }
   } else {
-    // 오답
-    shakeElement(imgCard);
-    shakeElement(selected.card);
-    gameState.matchState.wrongCount++;
-    updateWrongDots(gameState.matchState.wrongCount, 'match');
+    shakeElement(first.el);
+    shakeElement(second.el);
+    ms.wrongCount++;
+    updateWrongDots(ms.wrongCount, 'match');
 
-    if (gameState.matchState.wrongCount >= 3) {
+    const resetSelection = () => {
+      first.el.classList.remove('selected');
+      second.el.classList.remove('selected');
+      ms.selectedCard = null;
+    };
+
+    if (ms.wrongCount >= 3) {
       lockInput(() => {
-        gameState.matchState.wrongCount = 0;
+        ms.wrongCount = 0;
         updateWrongDots(0, 'match');
-        gameState.matchState.selectedQ = null;
-        document.querySelectorAll('.q-card.selected').forEach(c => c.classList.remove('selected'));
+        resetSelection();
       });
     } else {
-      lockInput(() => {
-        document.querySelectorAll('.q-card.selected').forEach(c => c.classList.remove('selected'));
-        gameState.matchState.selectedQ = null;
-      });
+      lockInput(resetSelection);
     }
   }
 }
 
 function updateMatchProgress() {
   const matched = gameState.matchState.matched.length;
-  const total = quizData['room4'] ? quizData['room4'].length : 8;
+  const total   = quizData['room4'] ? quizData['room4'].length : 8;
   document.getElementById('matchProgress').textContent = `${matched} / ${total}`;
 }
 
 function handleMatchComplete() {
   const config = ROOM_CONFIG['room4'];
   gameState.clearedRooms['room4'] = true;
-  gameState.codes['room4'] = config.code;
+  gameState.codes['room4']        = config.code;
   saveState();
-
   spawnStars(16);
   startConfetti(3000);
 
   showModal({
     title: '🎉 모든 카드 매칭 완료!',
-    message: `
-      <div class="code-reveal">
-        <span class="code-big">${config.code}</span>
-        <p>암호를 획득했어요! 대단해요!</p>
-      </div>
-    `,
+    message: `<div class="code-reveal"><span class="code-big">${config.code}</span><p>암호를 획득했어요! 대단해요!</p></div>`,
     confirmText: '🏠 홈으로',
-    onConfirm: () => {
-      showScreen('mainScreen');
-      renderMainScreen();
-    }
+    onConfirm: () => { showScreen('mainScreen'); renderMainScreen(); }
   });
 }
 
 // ===========================
 // 방탈출 입력 화면
 // ===========================
-
 let escapeInputSequence = [];
 
 function showEscapeScreen() {
@@ -2054,7 +1952,7 @@ function showEscapeScreen() {
 function renderCodeDisplay() {
   const display = document.getElementById('codeDisplay');
   display.innerHTML = '';
-  CORRECT_CODES.forEach((code, i) => {
+  CORRECT_CODES.forEach((_, i) => {
     const slot = document.createElement('div');
     slot.className = 'code-slot';
     slot.id = `slot${i}`;
@@ -2068,9 +1966,9 @@ function renderKeypad() {
   keypad.innerHTML = '';
   KEYPAD_BUTTONS.forEach(btn => {
     const el = document.createElement('button');
-    el.className = 'key-btn';
+    el.className   = 'key-btn';
     el.dataset.num = btn.num;
-    el.innerHTML = `<div class="key-num">${btn.num}</div><div class="key-char">(${btn.char})</div>`;
+    el.innerHTML   = `<div class="key-num">${btn.num}</div><div class="key-char">(${btn.char})</div>`;
     el.addEventListener('click', () => handleKeyPress(btn.num, el));
     keypad.appendChild(el);
   });
@@ -2078,12 +1976,9 @@ function renderKeypad() {
 
 function handleKeyPress(num, el) {
   if (escapeInputSequence.length >= CORRECT_CODES.length) return;
-
-  // 이미 선택된 버튼 표시
   el.classList.add('selected');
-
   escapeInputSequence.push(num);
-  const idx = escapeInputSequence.length - 1;
+  const idx  = escapeInputSequence.length - 1;
   const slot = document.getElementById(`slot${idx}`);
   if (slot) {
     slot.classList.add('filled');
@@ -2093,16 +1988,13 @@ function handleKeyPress(num, el) {
 
 function handleEscapeClear() {
   if (escapeInputSequence.length === 0) return;
-  const idx = escapeInputSequence.length - 1;
-  const slot = document.getElementById(`slot${idx}`);
+  const idx         = escapeInputSequence.length - 1;
+  const slot        = document.getElementById(`slot${idx}`);
   if (slot) {
     slot.classList.remove('filled');
     slot.querySelector('.slot-value').textContent = '?';
   }
-
-  // 해당 버튼 선택 해제
   const removedNum = escapeInputSequence.pop();
-  // 같은 숫자가 남아있지 않으면 selected 해제
   if (!escapeInputSequence.includes(removedNum)) {
     const btn = document.querySelector(`.key-btn[data-num="${removedNum}"]`);
     if (btn) btn.classList.remove('selected');
@@ -2114,7 +2006,6 @@ function handleEscapeSubmit() {
     showModal({ title: '⚠️ 안내', message: `${CORRECT_CODES.length}개의 암호를 모두 입력해주세요!`, confirmText: '확인', onConfirm: () => {} });
     return;
   }
-
   const isCorrect = escapeInputSequence.every((v, i) => v === CORRECT_CODES[i]);
 
   if (isCorrect) {
@@ -2122,7 +2013,6 @@ function handleEscapeSubmit() {
     spawnStars(20);
     showScreen('successScreen');
   } else {
-    // 오답
     shakeElement(document.getElementById('codeDisplay'));
     showModal({
       title: '❌ 틀렸어요!',
@@ -2138,9 +2028,8 @@ function handleEscapeSubmit() {
 }
 
 // ===========================
-// 리셋 시스템
+// 리셋
 // ===========================
-
 function resetGame() {
   showModal({
     title: '🔄 게임 리셋',
@@ -2150,15 +2039,10 @@ function resetGame() {
     onConfirm: () => {
       localStorage.removeItem(STORAGE_KEY);
       gameState = {
-        clearedRooms: {},
-        codes: {},
-        hintsUsed: 0,
-        currentRoom: null,
-        currentQuizIndex: 0,
-        currentQuizList: [],
-        wrongCount: 0,
-        isLocked: false,
-        matchState: { selectedQ: null, matched: [], wrongCount: 0 }
+        clearedRooms: {}, codes: {}, hintsUsed: 0,
+        currentRoom: null, currentQuizIndex: 0, currentQuizList: [],
+        wrongCount: 0, isLocked: false,
+        matchState: { selectedCard: null, matched: [], wrongCount: 0 }
       };
       renderMainScreen();
       showScreen('mainScreen');
@@ -2169,7 +2053,6 @@ function resetGame() {
 // ===========================
 // 전체화면
 // ===========================
-
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch(() => {});
@@ -2181,97 +2064,68 @@ function toggleFullscreen() {
 // ===========================
 // 이벤트 바인딩
 // ===========================
-
 function bindEvents() {
-  // 메인 화면
   document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
   document.getElementById('resetBtn').addEventListener('click', resetGame);
   document.getElementById('escapeBtn').addEventListener('click', () => {
     if (!document.getElementById('escapeBtn').disabled) showEscapeScreen();
   });
 
-  // 퀴즈 화면
   document.getElementById('quizHomeBtn').addEventListener('click', () => {
     if (gameState.isLocked) return;
-    showScreen('mainScreen');
-    renderMainScreen();
+    showScreen('mainScreen'); renderMainScreen();
   });
   document.getElementById('quizHintBtn').addEventListener('click', () => {
     if (gameState.currentRoom) showHint(gameState.currentRoom);
   });
 
-  // 매칭 화면
   document.getElementById('matchHomeBtn').addEventListener('click', () => {
     if (gameState.isLocked) return;
-    showScreen('mainScreen');
-    renderMainScreen();
+    showScreen('mainScreen'); renderMainScreen();
   });
   document.getElementById('matchHintBtn').addEventListener('click', () => showHint('room4'));
 
-  // 방탈출 화면
   document.getElementById('escapeHomeBtn').addEventListener('click', () => {
-    showScreen('mainScreen');
-    renderMainScreen();
+    showScreen('mainScreen'); renderMainScreen();
   });
   document.getElementById('escapeClearBtn').addEventListener('click', handleEscapeClear);
   document.getElementById('escapeSubmitBtn').addEventListener('click', handleEscapeSubmit);
 
-  // 성공 화면
   document.getElementById('restartBtn').addEventListener('click', resetGame);
 }
 
 // ===========================
 // 이미지 프리로드
 // ===========================
-
 async function preloadImages() {
-  const imageList = [
-    'images/1.png', 'images/2.png', 'images/3.png', 'images/4.png',
-    'images/L1.png', 'images/L2.png', 'images/L3.png',
-    'images/matching/M1.png', 'images/matching/M2.png', 'images/matching/M3.png',
-    'images/matching/M4.png', 'images/matching/M5.png', 'images/matching/M6.png',
-    'images/matching/M7.png', 'images/matching/M8.png'
+  const list = [
+    'images/1.png','images/2.png','images/3.png','images/4.png',
+    'images/L1.png','images/L2.png','images/L3.png',
+    'images/matching/M1.png','images/matching/M2.png','images/matching/M3.png',
+    'images/matching/M4.png','images/matching/M5.png','images/matching/M6.png',
+    'images/matching/M7.png','images/matching/M8.png'
   ];
-
-  const promises = imageList.map(src => {
-    return new Promise(resolve => {
-      const img = new Image();
-      img.onload = resolve;
-      img.onerror = resolve; // 실패해도 계속 진행
-      img.src = src;
-    });
-  });
-
-  await Promise.all(promises);
+  await Promise.all(list.map(src => new Promise(resolve => {
+    const img = new Image(); img.onload = img.onerror = resolve; img.src = src;
+  })));
 }
 
 // ===========================
-// 앱 초기화
+// 초기화
 // ===========================
-
 async function init() {
   try {
-    // JSON 데이터 로드
-    const response = await fetch(DATA_URL);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    quizData = await response.json();
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    quizData = await res.json();
 
-    // 이미지 프리로드 (백그라운드)
     preloadImages();
-
-    // 저장 상태 복원
     loadState();
-
-    // 이벤트 바인딩
     bindEvents();
-
-    // 메인 화면 렌더링
     renderMainScreen();
 
-    // 로딩 화면 숨기기
     document.getElementById('loadingScreen').style.display = 'none';
     showScreen('mainScreen');
-
   } catch (err) {
     console.error('초기화 오류:', err);
     document.getElementById('loadingScreen').innerHTML = `
@@ -2280,12 +2134,10 @@ async function init() {
         <h2 style="color:#FF6B6B; margin-bottom:12px;">데이터 로딩 실패</h2>
         <p style="color:#636e72; margin-bottom:20px;">퀴즈 데이터를 불러올 수 없어요.<br>GitHub Pages에서 실행 중인지 확인해주세요.</p>
         <button onclick="location.reload()" style="padding:12px 24px; background:#FF6B6B; color:white; border:none; border-radius:12px; font-size:1rem; cursor:pointer;">🔄 다시 시도</button>
-      </div>
-    `;
+      </div>`;
   }
 }
 
-// DOM 준비 후 실행
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
