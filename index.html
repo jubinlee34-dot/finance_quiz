@@ -588,23 +588,44 @@
       transform: scale(1.04);
     }
 
-    /* 매칭 완료 카드 */
+        /* 매칭 완료 카드 - 공통 */
     .mem-card.matched {
       border-color: #28A745;
-      background: linear-gradient(135deg, #D4EDDA, #C3E6CB) !important;
       cursor: default;
-      opacity: 0.75;
     }
-
-    .mem-card.matched .card-inner {
+    /* 매칭 완료 - 이미지 카드 */
+    .mem-card.img-type.matched {
+      background: linear-gradient(135deg, #D4EDDA, #C3E6CB) !important;
+      opacity: 0.72;
+    }
+    .mem-card.img-type.matched .card-inner {
       opacity: 0.6;
     }
-
+    /* 매칭 완료 - 문제 카드: 밝은 노란-민트 그라디언트 + 텍스트 표시 */
+    .mem-card.q-type.matched {
+      background: linear-gradient(135deg, #FFFDE7, #E0F7FA) !important;
+      border-color: #26C6DA;
+      box-shadow: 0 0 0 2px rgba(38,198,218,0.35), 0 4px 14px rgba(38,198,218,0.2);
+      opacity: 1;
+    }
+    .mem-card.q-type.matched .card-inner {
+      opacity: 1;
+      font-size: clamp(0.55rem, 1.6vw, 0.82rem);
+      font-weight: 700;
+      color: #00838F;
+      line-height: 1.4;
+      padding: 6px;
+      word-break: keep-all;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+    }
     .mem-card.matched::after {
       content: '✓';
       position: absolute;
       top: 4px; right: 6px;
-      font-size: clamp(1rem, 3vw, 1.4rem);
+      font-size: clamp(0.85rem, 2.5vw, 1.1rem);
       color: #28A745;
       font-weight: 900;
     }
@@ -1881,6 +1902,12 @@ function handleMemCardClick(el, cardData) {
     second.el.classList.remove('selected');
     first.el.classList.add('matched');
     second.el.classList.add('matched');
+
+    // 문제 카드의 card-inner를 문제 텍스트로 교체
+    const qEl   = first.cardData.type  === 'q' ? first.el  : second.el;
+    const qData = first.cardData.type  === 'q' ? first.cardData : second.cardData;
+    const inner = qEl.querySelector('.card-inner');
+    if (inner) inner.textContent = qData.question;
 
     ms.matched.push(first.cardData.id);
     ms.wrongCount = 0;
