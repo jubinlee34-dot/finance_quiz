@@ -1216,6 +1216,406 @@
     @media (max-width: 320px) {
       .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
     }
+
+    /* ===========================
+       미니게임 화면
+    =========================== */
+    #miniGameScreen {
+      background: linear-gradient(135deg, #89e4ff 0%, #94f5c9 46%, #ffe56c 100%);
+      overflow-y: auto;
+      padding: 0;
+      touch-action: none;
+    }
+    .mg-shell {
+      position: relative;
+      min-height: 100vh;
+      padding: 12px;
+      overflow: hidden;
+    }
+    .mg-bg-particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .mg-particle {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.65);
+      animation: mgFloatUp linear infinite;
+    }
+    @keyframes mgFloatUp {
+      from { transform: translateY(110vh) rotate(0); }
+      to   { transform: translateY(-20vh) rotate(360deg); }
+    }
+    .mg-topbar {
+      position: relative; z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 1180px;
+      margin: 0 auto 12px;
+      flex-wrap: wrap;
+    }
+    .mg-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .mg-brand-mark {
+      display: grid; place-items: center;
+      width: 52px; height: 52px;
+      flex: 0 0 auto;
+      border: 4px solid #f3a814;
+      border-radius: 50%;
+      color: #8b5200;
+      background: linear-gradient(#ffe979, #ffc03b);
+      box-shadow: inset 0 -6px 0 rgba(177,111,0,0.22), 0 6px 0 rgba(78,74,44,0.12);
+      font-size: 28px;
+    }
+    .mg-brand h2 {
+      margin: 0;
+      color: #17436b;
+      font-size: clamp(18px, 3.5vw, 28px);
+      text-shadow: 0 3px 0 rgba(255,255,255,0.8);
+      white-space: nowrap;
+    }
+    .mg-brand p {
+      margin: 0;
+      color: #286083;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .mg-hud {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(66px, 1fr));
+      gap: 7px;
+    }
+    .mg-hud-item {
+      min-width: 66px;
+      padding: 8px 9px;
+      border: 3px solid rgba(42,85,126,0.22);
+      border-radius: 14px;
+      background: rgba(255,253,246,0.92);
+      box-shadow: 0 5px 0 rgba(33,62,92,0.12);
+      text-align: center;
+    }
+    .mg-hud-item span {
+      display: block;
+      color: #53708b;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .mg-hud-item strong {
+      display: block;
+      color: #1f3f66;
+      font-size: clamp(16px, 2.4vw, 22px);
+      line-height: 1.05;
+    }
+    .mg-combo-hud strong { color: #e33d8f; }
+    .mg-urgent-watch.mg-urgent {
+      color: #fff;
+      background: #ff477d;
+      animation: mgUrgentPulse 520ms infinite alternate;
+    }
+    @keyframes mgUrgentPulse {
+      from { filter: brightness(1); }
+      to   { filter: brightness(1.25); }
+    }
+    .mg-layout {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) 280px;
+      gap: 14px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .mg-board-zone {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 4px solid rgba(31,81,128,0.18);
+      border-radius: 22px;
+      background: rgba(255,253,246,0.92);
+      box-shadow: 0 12px 0 rgba(25,53,88,0.14), 0 20px 36px rgba(23,62,110,0.18);
+    }
+    .mg-status-ribbon {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 14px;
+      color: #16436d;
+      background: linear-gradient(90deg, #fff3a3, #d3fff1);
+      font-weight: 900;
+      font-size: clamp(12px, 2vw, 15px);
+    }
+    .mg-board-wrap {
+      position: relative;
+      width: min(70vh, 100%);
+      max-width: 600px;
+      margin: 0 auto;
+      aspect-ratio: 1 / 1;
+    }
+    .mg-board {
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: clamp(4px, 0.9vw, 8px);
+      padding: clamp(6px, 1.2vw, 10px);
+      border: 5px solid #2e7cc5;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #3fa1ff, #236ed8);
+      box-shadow: inset 0 0 0 5px rgba(255,255,255,0.25), 0 12px 0 #1656a1;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .mg-tile {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1 / 1;
+      border: 0;
+      border-radius: 14px;
+      color: #26354d;
+      background: linear-gradient(#fffdfa, #ffeeb2);
+      box-shadow: inset 0 -6px 0 rgba(210,145,34,0.23), 0 4px 0 rgba(13,65,130,0.24);
+      font-size: clamp(16px, 4.2vw, 34px);
+      font-weight: 1000;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 120ms ease, filter 120ms ease, background 120ms ease;
+      font-family: inherit;
+    }
+    .mg-tile.mg-selected {
+      z-index: 2;
+      color: #fff;
+      background: linear-gradient(#ff82be, #ff3f94);
+      filter: drop-shadow(0 0 10px rgba(255,248,86,0.9));
+      transform: scale(1.12) rotate(-2deg);
+    }
+    .mg-tile.mg-path-good { animation: mgSparkle 650ms ease; }
+    .mg-tile.mg-found {
+      color: #6a4300;
+      background: linear-gradient(#ffe86d, #ffbd3d);
+      animation: mgFoundPulse 760ms ease;
+    }
+    @keyframes mgSparkle {
+      0%   { filter: brightness(1.8) saturate(1.8); transform: scale(1.18); }
+      100% { filter: brightness(1) saturate(1); transform: scale(1); }
+    }
+    @keyframes mgFoundPulse {
+      0%   { transform: scale(1.22); }
+      60%  { transform: scale(0.96); }
+      100% { transform: scale(1); }
+    }
+    .mg-fx-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .mg-selection-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      min-height: 44px;
+      border-radius: 14px;
+      background: #ffffffcc;
+      font-weight: 900;
+    }
+    .mg-selection-bar span { color: #5f7790; }
+    .mg-selection-bar strong {
+      color: #236ed8;
+      font-size: 20px;
+      letter-spacing: 2px;
+    }
+    .mg-word-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+      border: 4px solid rgba(31,81,128,0.18);
+      border-radius: 22px;
+      background: rgba(255,253,246,0.92);
+      box-shadow: 0 12px 0 rgba(25,53,88,0.14), 0 20px 36px rgba(23,62,110,0.18);
+      min-height: 0;
+    }
+    .mg-panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .mg-panel-title h3 {
+      margin: 0;
+      color: #17436b;
+      font-size: 20px;
+    }
+    .mg-sound-btn {
+      width: 40px; height: 40px;
+      border: 0;
+      border-radius: 50%;
+      background: #ffec78;
+      box-shadow: inset 0 -5px 0 rgba(166,107,0,0.2), 0 5px 0 rgba(0,0,0,0.12);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .mg-word-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+      margin: 0; padding: 0;
+      overflow: auto;
+      list-style: none;
+    }
+    .mg-word-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 7px;
+      padding: 8px 10px;
+      border: 3px solid rgba(44,106,169,0.14);
+      border-radius: 13px;
+      background: #fff;
+      font-size: 16px;
+      font-weight: 950;
+      transition: transform 170ms ease, background 170ms ease, color 170ms ease;
+    }
+    .mg-word-item .mg-check {
+      display: grid; place-items: center;
+      width: 25px; height: 25px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #e8f2ff;
+      color: #6e87a1;
+    }
+    .mg-word-item .mg-diff {
+      margin-left: auto;
+      padding: 2px 6px;
+      border-radius: 9px;
+      color: #fff;
+      background: #44a0ff;
+      font-size: 10px;
+    }
+    .mg-word-item.medium .mg-diff { background: #ff9b38; }
+    .mg-word-item.hard   .mg-diff { background: #e94891; }
+    .mg-word-item.mg-golden { border-color: #f7b900; background: #fff7c4; }
+    .mg-word-item.mg-found {
+      color: #19774d;
+      background: #dbffe9;
+      transform: scale(1.03);
+    }
+    .mg-word-item.mg-found .mg-check { background: #39d083; color: #fff; }
+    .mg-primary-btn {
+      display: inline-grid;
+      place-items: center;
+      min-height: 50px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 16px;
+      color: #fff;
+      background: linear-gradient(#ff78b5, #ee368d);
+      box-shadow: inset 0 -6px 0 rgba(126,0,64,0.22), 0 6px 0 rgba(65,42,75,0.18);
+      font-size: 20px;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: transform 120ms ease, filter 120ms ease;
+      font-family: inherit;
+      width: 100%;
+    }
+    .mg-primary-btn:hover { filter: brightness(1.05); transform: translateY(-2px); }
+    .mg-primary-btn:active { transform: translateY(3px); }
+    .mg-exit-btn {
+      display: inline-grid;
+      place-items: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 14px;
+      color: #fff;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      box-shadow: 0 5px 0 rgba(65,42,75,0.2);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 120ms ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .mg-exit-btn:hover { transform: translateY(-2px); }
+    .mg-overlay {
+      position: fixed; inset: 0; z-index: 10;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(44,112,176,0.28);
+      backdrop-filter: blur(5px);
+    }
+    .mg-overlay.mg-show { display: flex; }
+    .mg-modal {
+      width: min(400px, 100%);
+      padding: 26px;
+      text-align: center;
+      border: 4px solid rgba(31,81,128,0.18);
+      border-radius: 22px;
+      background: rgba(255,253,246,0.97);
+      box-shadow: 0 12px 0 rgba(25,53,88,0.14), 0 20px 36px rgba(23,62,110,0.18);
+      animation: mgPopIn 300ms ease;
+    }
+    @keyframes mgPopIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .mg-coin-badge {
+      display: grid; place-items: center;
+      width: 58px; height: 58px;
+      margin: 0 auto 12px;
+      border: 4px solid #f3a814;
+      border-radius: 50%;
+      color: #8b5200;
+      background: linear-gradient(#ffe979, #ffc03b);
+      box-shadow: inset 0 -6px 0 rgba(177,111,0,0.22), 0 6px 0 rgba(78,74,44,0.12);
+      font-size: 28px;
+    }
+    .mg-modal h2 { margin: 0; color: #17436b; font-size: 30px; }
+    .mg-modal p  { margin: 10px 0 18px; color: #48657d; font-size: 16px; font-weight: 800; line-height: 1.5; }
+    .mg-count-text {
+      color: #fff;
+      font-size: clamp(52px, 15vw, 130px);
+      font-weight: 1000;
+      text-shadow: 0 8px 0 rgba(0,0,0,0.18), 0 0 24px rgba(255,255,255,0.75);
+      animation: mgCountBoom 650ms ease;
+    }
+    @keyframes mgCountBoom {
+      from { transform: scale(2.2); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .mg-result-score {
+      margin: 12px auto 5px;
+      color: #e33d8f;
+      font-size: 44px;
+      font-weight: 1000;
+    }
+    .mg-shake { animation: mgShake 280ms ease; }
+    @keyframes mgShake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-6px); }
+      40%,80% { transform: translateX(6px); }
+    }
+    /* 미니게임 반응형 */
+    @media (max-width: 700px) {
+      .mg-layout { grid-template-columns: 1fr; }
+      .mg-word-panel { max-height: 220px; overflow-y: auto; }
+      .mg-board-wrap { width: min(90vw, 100%); }
+    }
+    @media (max-width: 480px) {
+      .mg-hud { grid-template-columns: repeat(4, 1fr); gap: 5px; }
+      .mg-hud-item { min-width: 0; padding: 6px 4px; }
+    }
   </style>
 </head>
 <body>
@@ -1449,7 +1849,92 @@
       약속한 기한에 갚을 수 있는 능력을 말해요.<br><br>
       여러분은 훌륭한 금융 전문가예요! 🌟
     </div>
-    <button class="success-restart-btn" id="restartBtn">🔄 다시 도전하기</button>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+      <button class="success-restart-btn" id="restartBtn">🔄 다시 도전하기</button>
+      <button class="success-restart-btn" id="miniGameBtn" style="background:linear-gradient(135deg,#43e97b,#38f9d7);box-shadow:0 8px 24px rgba(67,233,123,0.4);">🎮 미니게임 하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===========================
+     미니게임 화면 (금융 단어 팡팡)
+=========================== -->
+<div id="miniGameScreen" class="screen">
+  <div class="mg-shell" id="mgShell">
+    <div class="mg-bg-particles" id="mgParticles" aria-hidden="true"></div>
+    <header class="mg-topbar">
+      <div class="mg-brand">
+        <div class="mg-brand-mark">₩</div>
+        <div>
+          <h2>금융 단어 팡팡!</h2>
+          <p>드래그해서 단어를 찾아요</p>
+        </div>
+      </div>
+      <div class="mg-hud">
+        <div class="mg-hud-item mg-urgent-watch" id="mgTimeBox">
+          <span>시간</span>
+          <strong id="mgTimeText">05:00</strong>
+        </div>
+        <div class="mg-hud-item">
+          <span>점수</span>
+          <strong id="mgScoreText">0</strong>
+        </div>
+        <div class="mg-hud-item">
+          <span>최고</span>
+          <strong id="mgBestText">0</strong>
+        </div>
+        <div class="mg-hud-item mg-combo-hud">
+          <span>콤보</span>
+          <strong id="mgComboText">x1</strong>
+        </div>
+      </div>
+    </header>
+    <main class="mg-layout">
+      <section class="mg-board-zone">
+        <div class="mg-status-ribbon">
+          <span id="mgGoldenWordText">⭐ 황금 단어 준비!</span>
+          <span id="mgLastRecordText">지난 기록 0점</span>
+        </div>
+        <div class="mg-board-wrap">
+          <div class="mg-board" id="mgBoard"></div>
+          <canvas class="mg-fx-canvas" id="mgFxCanvas" aria-hidden="true"></canvas>
+        </div>
+        <div class="mg-selection-bar">
+          <span>선택</span>
+          <strong id="mgCurrentWordText">-</strong>
+        </div>
+      </section>
+      <aside class="mg-word-panel">
+        <div class="mg-panel-title">
+          <h3>찾을 금융 단어</h3>
+          <button class="mg-sound-btn" id="mgSoundBtn" type="button">🔊</button>
+        </div>
+        <ul class="mg-word-list" id="mgWordList"></ul>
+        <button class="mg-primary-btn" id="mgNewGameBtn" type="button">새 게임</button>
+        <button class="mg-exit-btn" id="mgExitBtn" type="button">🏠 돌아가기</button>
+      </aside>
+    </main>
+    <!-- 미니게임 오버레이 -->
+    <div class="mg-overlay mg-show" id="mgStartOverlay">
+      <div class="mg-modal">
+        <div class="mg-coin-badge">₩</div>
+        <h2>금융 단어 팡팡!</h2>
+        <p>인접한 글자를 순서대로 드래그해서<br>단어를 완성하세요!</p>
+        <button class="mg-primary-btn" id="mgStartBtn" type="button">시작하기</button>
+      </div>
+    </div>
+    <div class="mg-overlay" id="mgCountOverlay">
+      <div class="mg-count-text" id="mgCountText">READY</div>
+    </div>
+    <div class="mg-overlay" id="mgGameOverOverlay">
+      <div class="mg-modal">
+        <h2>게임 종료!</h2>
+        <div class="mg-result-score" id="mgFinalScoreText">0점</div>
+        <p id="mgFinalBestText">최고 기록 0점</p>
+        <button class="mg-primary-btn" id="mgRetryBtn" type="button">다시하기</button>
+        <button class="mg-exit-btn" style="margin-top:10px;" id="mgExitBtn2" type="button">🏠 돌아가기</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2447,6 +2932,9 @@ function bindEvents() {
   document.getElementById('escapeClearBtn').addEventListener('click', handleEscapeClear);
   document.getElementById('escapeSubmitBtn').addEventListener('click', handleEscapeSubmit);
   document.getElementById('restartBtn').addEventListener('click', resetGame);
+  document.getElementById('miniGameBtn').addEventListener('click', function() {
+    startMiniGame();
+  });
 }
 // ===========================
 // 난이도 선택
@@ -2527,6 +3015,573 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ============================================================
+//  미니게임: 금융 단어 팡팡 (Word Search)
+// ============================================================
+(function() {
+  'use strict';
+
+  var BOARD_SIZE = 8;
+  var GAME_SECONDS = 300;
+  var COMBO_WINDOW = 2200;
+  var STORAGE_BEST = 'financePuzzleBestScore';
+  var STORAGE_LAST = 'financePuzzleLastScore';
+
+  var WORD_BANK = [
+    // 쉬움 (점수 1)
+    { text: '저축', score: 1, level: 'easy' },
+    { text: '수입', score: 1, level: 'easy' },
+    { text: '지출', score: 1, level: 'easy' },
+    { text: '수표', score: 1, level: 'easy' },
+    { text: '용돈', score: 1, level: 'easy' },
+    { text: '이자', score: 1, level: 'easy' },
+    { text: '세금', score: 1, level: 'easy' },
+    { text: '주식', score: 1, level: 'easy' },
+    { text: '환율', score: 1, level: 'easy' },
+    { text: '보험', score: 1, level: 'easy' },
+    // 보통 (점수 2)
+    { text: '신용', score: 2, level: 'medium' },
+    { text: '예금', score: 2, level: 'medium' },
+    { text: '적금', score: 2, level: 'medium' },
+    { text: '원리금', score: 2, level: 'medium' },
+    { text: '수익', score: 2, level: 'medium' },
+    { text: '소비', score: 2, level: 'medium' },
+    { text: '생산', score: 2, level: 'medium' },
+    { text: '부채', score: 2, level: 'medium' },
+    { text: '대출', score: 2, level: 'medium' },
+    { text: '자산', score: 2, level: 'medium' },
+    { text: '재산', score: 2, level: 'medium' },
+    { text: '통장', score: 2, level: 'medium' },
+    // 어려움 (점수 3)
+    { text: '가계부', score: 3, level: 'hard' },
+    { text: '정기적금', score: 3, level: 'hard' },
+    { text: '주택담보대출', score: 3, level: 'hard' },
+    { text: '금융사기', score: 3, level: 'hard' },
+    { text: '신용카드', score: 3, level: 'hard' },
+    { text: '소득공제', score: 3, level: 'hard' },
+    { text: '예금적금', score: 3, level: 'hard' },
+    { text: '지출관리', score: 3, level: 'hard' },
+  ];
+
+  var FILLERS = '가나다라마바사아자차카타파하가나다라마바사아자수입저축이자세금용돈환율주식부돈지원산업돈재산';
+
+  var mgState = {};
+  var mgParticles = [];
+  var mgRafId = null;
+  var mgCtx = null;
+  var mgAudioCtx = null;
+  var mgMuted = false;
+  var mgTimerInterval = null;
+  var mgInitialized = false;
+
+  var mgEls = {};
+
+  function mgShuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function mgPickTargets() {
+    var easy   = mgShuffle(WORD_BANK.filter(function(w){ return w.level === 'easy'; })).slice(0, 5);
+    var medium = mgShuffle(WORD_BANK.filter(function(w){ return w.level === 'medium'; })).slice(0, 4);
+    var hard   = mgShuffle(WORD_BANK.filter(function(w){ return w.level === 'hard'; })).slice(0, 3);
+    return easy.concat(medium).concat(hard).map(function(w) {
+      return { text: w.text, score: w.score, level: w.level, found: false };
+    });
+  }
+
+  var DIRS = [
+    [0,1],[1,0],[1,1],[1,-1],
+    [0,-1],[-1,0],[-1,-1],[-1,1]
+  ];
+
+  function mgPlaceWord(board, word) {
+    var chars = word.split('');
+    var len = chars.length;
+    var attempts = 0;
+    while (attempts < 200) {
+      attempts++;
+      var dir = DIRS[Math.floor(Math.random() * DIRS.length)];
+      var r = Math.floor(Math.random() * BOARD_SIZE);
+      var c = Math.floor(Math.random() * BOARD_SIZE);
+      var er = r + dir[0] * (len - 1);
+      var ec = c + dir[1] * (len - 1);
+      if (er < 0 || er >= BOARD_SIZE || ec < 0 || ec >= BOARD_SIZE) continue;
+      var ok = true;
+      for (var k = 0; k < len; k++) {
+        var nr = r + dir[0] * k;
+        var nc = c + dir[1] * k;
+        if (board[nr][nc] !== '' && board[nr][nc] !== chars[k]) { ok = false; break; }
+      }
+      if (!ok) continue;
+      for (var k = 0; k < len; k++) {
+        board[r + dir[0] * k][c + dir[1] * k] = chars[k];
+      }
+      return true;
+    }
+    return false;
+  }
+
+  function mgGenerateBoard(targets) {
+    var board = [];
+    for (var r = 0; r < BOARD_SIZE; r++) {
+      board.push([]);
+      for (var c = 0; c < BOARD_SIZE; c++) board[r].push('');
+    }
+    var placed = [];
+    var words = mgShuffle(targets.slice());
+    words.forEach(function(w) {
+      if (mgPlaceWord(board, w.text)) placed.push(w);
+    });
+    // 빈 칸 랜덤 글자 채우기
+    for (var r = 0; r < BOARD_SIZE; r++) {
+      for (var c = 0; c < BOARD_SIZE; c++) {
+        if (board[r][c] === '') {
+          board[r][c] = FILLERS[Math.floor(Math.random() * FILLERS.length)];
+        }
+      }
+    }
+    return { board: board, targets: placed.length > 0 ? placed : targets };
+  }
+
+  function mgResetState() {
+    mgState = {
+      board: [],
+      targets: [],
+      goldenWord: '',
+      score: 0,
+      secondsLeft: GAME_SECONDS,
+      running: false,
+      selected: [],
+      dragging: false,
+      combo: 1,
+      lastSuccessAt: 0,
+    };
+  }
+
+  function mgSetupNewGame() {
+    mgResetState();
+    var targets = mgPickTargets();
+    var gen = mgGenerateBoard(targets);
+    mgState.board = gen.board;
+    mgState.targets = gen.targets;
+    mgState.goldenWord = mgShuffle(mgState.targets)[0].text;
+    var best = parseInt(localStorage.getItem(STORAGE_BEST) || '0', 10);
+    var last = parseInt(localStorage.getItem(STORAGE_LAST) || '0', 10);
+    mgEls.bestText.textContent = String(best);
+    mgEls.lastRecordText.textContent = '지난 기록 ' + last + '점';
+    mgRender();
+    mgRenderWordList();
+    mgUpdateHud();
+  }
+
+  function mgRender() {
+    mgEls.board.innerHTML = '';
+    for (var r = 0; r < BOARD_SIZE; r++) {
+      for (var c = 0; c < BOARD_SIZE; c++) {
+        var tile = document.createElement('button');
+        tile.className = 'mg-tile';
+        tile.textContent = mgState.board[r][c];
+        tile.dataset.r = r;
+        tile.dataset.c = c;
+        // 이미 찾은 단어의 일부인지 확인
+        if (mgIsCellFound(r, c)) tile.classList.add('mg-found');
+        mgEls.board.appendChild(tile);
+      }
+    }
+    mgResizeCanvas();
+  }
+
+  function mgIsCellFound(r, c) {
+    return mgState.targets.some(function(t) {
+      if (!t.found || !t.cells) return false;
+      return t.cells.some(function(cell) { return cell[0] === r && cell[1] === c; });
+    });
+  }
+
+  function mgRenderWordList() {
+    mgEls.wordList.innerHTML = '';
+    mgState.targets.forEach(function(t) {
+      var li = document.createElement('li');
+      li.className = 'mg-word-item ' + t.level + (t === mgState.targets.find(function(x){ return x.text === mgState.goldenWord; }) ? ' mg-golden' : '') + (t.found ? ' mg-found' : '');
+      li.innerHTML = '<span class="mg-check">' + (t.found ? '✓' : '○') + '</span>' +
+        '<span>' + t.text + '</span>' +
+        '<span class="mg-diff">' + { easy: '쉬움', medium: '보통', hard: '어려움' }[t.level] + '</span>';
+      mgEls.wordList.appendChild(li);
+    });
+  }
+
+  function mgUpdateHud() {
+    var m = Math.floor(mgState.secondsLeft / 60);
+    var s = mgState.secondsLeft % 60;
+    mgEls.timeText.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    mgEls.scoreText.textContent = String(mgState.score);
+    mgEls.comboText.textContent = 'x' + mgState.combo;
+    if (mgState.secondsLeft <= 30) {
+      mgEls.timeBox.classList.add('mg-urgent');
+    } else {
+      mgEls.timeBox.classList.remove('mg-urgent');
+    }
+  }
+
+  function mgStartCountdown() {
+    mgEls.countOverlay.classList.add('mg-show');
+    var count = 3;
+    mgEls.countText.textContent = String(count);
+    mgPlayTone('click');
+    var iv = setInterval(function() {
+      count--;
+      if (count > 0) {
+        mgEls.countText.textContent = String(count);
+        mgPlayTone('click');
+      } else {
+        clearInterval(iv);
+        mgEls.countOverlay.classList.remove('mg-show');
+        mgBeginGame();
+      }
+    }, 800);
+  }
+
+  function mgBeginGame() {
+    mgState.running = true;
+    mgState.secondsLeft = GAME_SECONDS;
+    mgUpdateHud();
+    mgTimerInterval = setInterval(function() {
+      if (!mgState.running) return;
+      mgState.secondsLeft--;
+      mgUpdateHud();
+      if (mgState.secondsLeft <= 0) mgEndGame();
+    }, 1000);
+  }
+
+  function mgEndGame() {
+    mgState.running = false;
+    clearInterval(mgTimerInterval);
+    mgPlayTone('end');
+    var best = parseInt(localStorage.getItem(STORAGE_BEST) || '0', 10);
+    if (mgState.score > best) {
+      best = mgState.score;
+      localStorage.setItem(STORAGE_BEST, String(best));
+    }
+    localStorage.setItem(STORAGE_LAST, String(mgState.score));
+    mgEls.finalScoreText.textContent = mgState.score + '점';
+    mgEls.finalBestText.textContent = '최고 기록 ' + best + '점';
+    mgEls.gameOverOverlay.classList.add('mg-show');
+  }
+
+  // 드래그 선택
+  function mgGetTileAt(x, y) {
+    var tiles = mgEls.board.querySelectorAll('.mg-tile');
+    for (var i = 0; i < tiles.length; i++) {
+      var rect = tiles[i].getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return tiles[i];
+    }
+    return null;
+  }
+
+  function mgStartDrag(e) {
+    if (!mgState.running) return;
+    e.preventDefault();
+    mgState.dragging = true;
+    mgState.selected = [];
+    var pt = e.touches ? e.touches[0] : e;
+    var tile = mgGetTileAt(pt.clientX, pt.clientY);
+    if (tile) mgAddToSelection(tile);
+    mgPlayTone('click');
+  }
+
+  function mgMoveDrag(e) {
+    if (!mgState.running || !mgState.dragging) return;
+    e.preventDefault();
+    var pt = e.touches ? e.touches[0] : e;
+    var tile = mgGetTileAt(pt.clientX, pt.clientY);
+    if (tile && !mgState.selected.find(function(s){ return s.tile === tile; })) {
+      mgAddToSelection(tile);
+    }
+  }
+
+  function mgEndDrag(e) {
+    if (!mgState.dragging) return;
+    mgState.dragging = false;
+    mgCheckWord();
+  }
+
+  function mgAddToSelection(tile) {
+    tile.classList.add('mg-selected');
+    mgState.selected.push({ tile: tile, r: parseInt(tile.dataset.r), c: parseInt(tile.dataset.c) });
+    var word = mgState.selected.map(function(s){ return s.tile.textContent; }).join('');
+    mgEls.currentWordText.textContent = word;
+  }
+
+  function mgClearSelection() {
+    mgState.selected.forEach(function(s) { s.tile.classList.remove('mg-selected'); });
+    mgState.selected = [];
+    mgEls.currentWordText.textContent = '-';
+  }
+
+  function mgCheckWord() {
+    var word = mgState.selected.map(function(s){ return s.tile.textContent; }).join('');
+    var target = mgState.targets.find(function(t){ return !t.found && t.text === word; });
+    if (target) {
+      mgHandleSuccess(target);
+    } else {
+      mgClearSelection();
+    }
+  }
+
+  function mgHandleSuccess(target) {
+    var now = Date.now();
+    if (now - mgState.lastSuccessAt <= COMBO_WINDOW) {
+      mgState.combo += 1;
+    } else {
+      mgState.combo = 1;
+    }
+    mgState.lastSuccessAt = now;
+    target.found = true;
+    target.cells = mgState.selected.map(function(s){ return [s.r, s.c]; });
+    var isGolden = target.text === mgState.goldenWord;
+    var gained = target.score * mgState.combo * (isGolden ? 3 : 1);
+    mgState.score += gained;
+    if (isGolden) mgState.secondsLeft = Math.min(mgState.secondsLeft + 10, GAME_SECONDS);
+    mgState.selected.forEach(function(s) {
+      s.tile.classList.remove('mg-selected');
+      s.tile.classList.add('mg-found', 'mg-path-good');
+      setTimeout(function() { s.tile.classList.remove('mg-path-good'); }, 750);
+    });
+    var center = mgSelectionCenter();
+    mgShowScorePop(center.x, center.y, '+' + gained + (isGolden ? ' ⭐' : ''));
+    if (mgState.combo >= 2) mgShowComboPop(center.x, center.y - 42);
+    mgBurst(center.x, center.y, isGolden ? 34 : 22);
+    mgEls.shell.classList.add('mg-shake');
+    setTimeout(function() { mgEls.shell.classList.remove('mg-shake'); }, 300);
+    mgPlayTone(isGolden ? 'gold' : (mgState.combo >= 2 ? 'combo' : 'success'));
+    mgClearSelection();
+    mgRenderWordList();
+    mgUpdateHud();
+    // 전체 클리어 시 새 보드
+    if (mgState.targets.every(function(t){ return t.found; })) {
+      mgState.secondsLeft = Math.min(mgState.secondsLeft + 20, GAME_SECONDS);
+      mgShowScorePop(window.innerWidth / 2, window.innerHeight * 0.28, '전체 클리어 +20초!');
+      mgState.targets.forEach(function(t){ t.found = false; delete t.cells; });
+      var gen = mgGenerateBoard(mgPickTargets());
+      mgState.board = gen.board;
+      mgState.targets = gen.targets;
+      mgState.goldenWord = mgShuffle(mgState.targets)[0].text;
+      mgRender();
+      mgRenderWordList();
+    }
+  }
+
+  function mgSelectionCenter() {
+    if (!mgState.selected.length) return { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    var tx = 0, ty = 0;
+    mgState.selected.forEach(function(s) {
+      var rect = s.tile.getBoundingClientRect();
+      tx += rect.left + rect.width / 2;
+      ty += rect.top + rect.height / 2;
+    });
+    return { x: tx / mgState.selected.length, y: ty / mgState.selected.length };
+  }
+
+  function mgShowScorePop(x, y, text) {
+    var pop = document.createElement('div');
+    pop.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;font-weight:1000;font-size:28px;color:#ff2f8c;text-shadow:0 3px 0 rgba(0,0,0,0.12);animation:mgPopFloat 900ms ease forwards;left:' + x + 'px;top:' + y + 'px;font-family:inherit;';
+    pop.textContent = text;
+    document.body.appendChild(pop);
+    setTimeout(function() { pop.remove(); }, 950);
+  }
+
+  function mgShowComboPop(x, y) {
+    var pop = document.createElement('div');
+    pop.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;font-weight:1000;font-size:26px;color:#fff;padding:6px 12px;border-radius:999px;background:linear-gradient(90deg,#ff7fb9,#ffd84d);animation:mgPopFloat 900ms ease forwards;left:' + x + 'px;top:' + y + 'px;font-family:inherit;';
+    pop.textContent = 'COMBO x' + mgState.combo;
+    document.body.appendChild(pop);
+    setTimeout(function() { pop.remove(); }, 950);
+  }
+
+  function mgResizeCanvas() {
+    var rect = mgEls.fxCanvas.getBoundingClientRect();
+    var ratio = window.devicePixelRatio || 1;
+    mgEls.fxCanvas.width = Math.max(1, Math.floor(rect.width * ratio));
+    mgEls.fxCanvas.height = Math.max(1, Math.floor(rect.height * ratio));
+    if (mgCtx) mgCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  }
+
+  function mgBurst(pageX, pageY, count) {
+    if (!mgCtx) return;
+    var rect = mgEls.fxCanvas.getBoundingClientRect();
+    for (var i = 0; i < count; i++) {
+      var angle = Math.random() * Math.PI * 2;
+      var speed = 2 + Math.random() * 5;
+      mgParticles.push({
+        x: pageX - rect.left, y: pageY - rect.top,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+        life: 40 + Math.random() * 20,
+        size: 4 + Math.random() * 6,
+        color: ['#ffd84d','#ff77b7','#76f2bb','#ffffff','#3478ff'][Math.floor(Math.random() * 5)]
+      });
+    }
+  }
+
+  function mgLoopFx() {
+    if (!mgCtx) { mgRafId = requestAnimationFrame(mgLoopFx); return; }
+    var rect = mgEls.fxCanvas.getBoundingClientRect();
+    mgCtx.clearRect(0, 0, rect.width, rect.height);
+    mgParticles = mgParticles.filter(function(p){ return p.life > 0; });
+    mgParticles.forEach(function(p) {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life -= 1;
+      mgCtx.globalAlpha = Math.max(0, p.life / 60);
+      mgCtx.fillStyle = p.color;
+      mgCtx.beginPath();
+      mgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      mgCtx.fill();
+    });
+    mgCtx.globalAlpha = 1;
+    mgRafId = requestAnimationFrame(mgLoopFx);
+  }
+
+  function mgCreateBgParticles() {
+    mgEls.particles.innerHTML = '';
+    for (var i = 0; i < 24; i++) {
+      var dot = document.createElement('span');
+      dot.className = 'mg-particle';
+      dot.style.left = Math.random() * 100 + '%';
+      dot.style.animationDuration = (8 + Math.random() * 12) + 's';
+      dot.style.animationDelay = (-Math.random() * 12) + 's';
+      dot.style.opacity = String(0.25 + Math.random() * 0.5);
+      dot.style.transform = 'scale(' + (0.6 + Math.random() * 1.1) + ')';
+      mgEls.particles.appendChild(dot);
+    }
+  }
+
+  function mgEnsureAudio() {
+    if (!mgAudioCtx && !mgMuted) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) mgAudioCtx = new AC();
+    }
+    if (mgAudioCtx && mgAudioCtx.state === 'suspended') mgAudioCtx.resume();
+  }
+
+  function mgPlayTone(type) {
+    if (mgMuted) return;
+    mgEnsureAudio();
+    if (!mgAudioCtx) return;
+    var now = mgAudioCtx.currentTime;
+    var gain = mgAudioCtx.createGain();
+    var osc = mgAudioCtx.createOscillator();
+    var sec = mgAudioCtx.createOscillator();
+    var freq = 440, end = 0.12, vol = 0.1;
+    if (type === 'click')   { freq = 560; end = 0.05; }
+    else if (type === 'success') { freq = 740; end = 0.16; }
+    else if (type === 'combo')   { freq = 880; end = 0.20; }
+    else if (type === 'gold')    { freq = 1040; end = 0.28; }
+    else if (type === 'end')     { freq = 220; end = 0.38; }
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(freq, now);
+    osc.frequency.exponentialRampToValueAtTime(type === 'end' ? 120 : freq * 1.55, now + end);
+    sec.type = 'triangle';
+    sec.frequency.setValueAtTime(freq * 1.5, now);
+    gain.gain.setValueAtTime(vol, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + end);
+    osc.connect(gain); sec.connect(gain); gain.connect(mgAudioCtx.destination);
+    osc.start(now); sec.start(now); osc.stop(now + end); sec.stop(now + end);
+  }
+
+  function mgExitToSuccess() {
+    mgState.running = false;
+    clearInterval(mgTimerInterval);
+    if (mgRafId) { cancelAnimationFrame(mgRafId); mgRafId = null; }
+    // 모든 오버레이 닫기
+    mgEls.startOverlay.classList.remove('mg-show');
+    mgEls.countOverlay.classList.remove('mg-show');
+    mgEls.gameOverOverlay.classList.remove('mg-show');
+    showScreen('successScreen');
+  }
+
+  // 미니게임 시작 (success 화면에서 호출)
+  window.startMiniGame = function() {
+    if (!mgInitialized) {
+      mgInitialize();
+      mgInitialized = true;
+    } else {
+      // 재시작 시 새 게임 설정
+      mgSetupNewGame();
+      mgEls.startOverlay.classList.add('mg-show');
+      mgEls.gameOverOverlay.classList.remove('mg-show');
+    }
+    showScreen('miniGameScreen');
+  };
+
+  function mgInitialize() {
+    // DOM 요소 연결
+    mgEls = {
+      shell:           document.getElementById('mgShell'),
+      particles:       document.getElementById('mgParticles'),
+      board:           document.getElementById('mgBoard'),
+      fxCanvas:        document.getElementById('mgFxCanvas'),
+      timeBox:         document.getElementById('mgTimeBox'),
+      timeText:        document.getElementById('mgTimeText'),
+      scoreText:       document.getElementById('mgScoreText'),
+      bestText:        document.getElementById('mgBestText'),
+      comboText:       document.getElementById('mgComboText'),
+      goldenWordText:  document.getElementById('mgGoldenWordText'),
+      lastRecordText:  document.getElementById('mgLastRecordText'),
+      currentWordText: document.getElementById('mgCurrentWordText'),
+      wordList:        document.getElementById('mgWordList'),
+      startOverlay:    document.getElementById('mgStartOverlay'),
+      countOverlay:    document.getElementById('mgCountOverlay'),
+      gameOverOverlay: document.getElementById('mgGameOverOverlay'),
+      finalScoreText:  document.getElementById('mgFinalScoreText'),
+      finalBestText:   document.getElementById('mgFinalBestText'),
+      soundBtn:        document.getElementById('mgSoundBtn'),
+    };
+    mgCtx = mgEls.fxCanvas.getContext('2d');
+    mgCreateBgParticles();
+    mgSetupNewGame();
+    mgLoopFx();
+    // 이벤트 바인딩
+    mgEls.board.addEventListener('pointerdown', mgStartDrag);
+    window.addEventListener('pointermove', mgMoveDrag, { passive: false });
+    window.addEventListener('pointerup', mgEndDrag);
+    window.addEventListener('pointercancel', mgEndDrag);
+    mgEls.board.addEventListener('touchmove', mgMoveDrag, { passive: false });
+    document.getElementById('mgStartBtn').addEventListener('click', function() {
+      mgEls.startOverlay.classList.remove('mg-show');
+      mgStartCountdown();
+    });
+    document.getElementById('mgRetryBtn').addEventListener('click', function() {
+      mgEls.gameOverOverlay.classList.remove('mg-show');
+      mgSetupNewGame();
+      mgStartCountdown();
+    });
+    document.getElementById('mgNewGameBtn').addEventListener('click', function() {
+      clearInterval(mgTimerInterval);
+      mgState.running = false;
+      mgSetupNewGame();
+      mgEls.gameOverOverlay.classList.remove('mg-show');
+      mgEls.startOverlay.classList.add('mg-show');
+    });
+    document.getElementById('mgExitBtn').addEventListener('click', mgExitToSuccess);
+    document.getElementById('mgExitBtn2').addEventListener('click', mgExitToSuccess);
+    mgEls.soundBtn.addEventListener('click', function() {
+      mgMuted = !mgMuted;
+      mgEls.soundBtn.textContent = mgMuted ? '🔇' : '🔊';
+      if (!mgMuted) mgPlayTone('click');
+    });
+    window.addEventListener('resize', mgResizeCanvas);
+  }
+
+  // 미니게임 팝플로트 애니메이션 주입
+  var mgStyle = document.createElement('style');
+  mgStyle.textContent = '@keyframes mgPopFloat { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-60px); opacity: 0; } }';
+  document.head.appendChild(mgStyle);
+
+}());
 </script>
 </body>
 </html>
