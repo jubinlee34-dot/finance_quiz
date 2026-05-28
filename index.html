@@ -3019,8 +3019,6 @@ document.addEventListener('DOMContentLoaded', init);
 // ============================================================
 //  미니게임: 금융 단어 팡팡 (Word Search)
 // ============================================================
-(function() {
-  'use strict';
 
   var BOARD_SIZE = 8;
   var GAME_SECONDS = 300;
@@ -3504,7 +3502,7 @@ document.addEventListener('DOMContentLoaded', init);
   }
 
   // 미니게임 시작 (success 화면에서 호출)
-  window.startMiniGame = function() {
+function startMiniGame() {
     if (!mgInitialized) {
       mgInitialize();
       mgInitialized = true;
@@ -3581,7 +3579,7 @@ document.addEventListener('DOMContentLoaded', init);
   mgStyle.textContent = '@keyframes mgPopFloat { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-60px); opacity: 0; } }';
   document.head.appendChild(mgStyle);
 
-}());
+
 </script>
 </body>
 </html>
