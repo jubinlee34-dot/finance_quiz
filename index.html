@@ -1877,7 +1877,7 @@ function handleMCQAnswer(btn, selected, answer, explanation) {
       lockInput(() => {
         gameState.wrongCount       = 0;
         gameState.currentQuizIndex = 0;
-        gameState.currentQuizList  = shuffle(quizData[gameState.currentRoom]);
+        const _lim = DIFFICULTY_CONFIG[gameState.difficulty].quiz; gameState.currentQuizList = shuffle(quizData[gameState.currentRoom]).slice(0, _lim);
         updateWrongDots(0, 'quiz');
         renderCurrentQuiz();
       });
@@ -1933,7 +1933,7 @@ function handleOXAnswer(selected, quiz) {
       lockInput(() => {
         gameState.wrongCount       = 0;
         gameState.currentQuizIndex = 0;
-        gameState.currentQuizList  = shuffle(quizData[gameState.currentRoom]);
+        const _lim = DIFFICULTY_CONFIG[gameState.difficulty].quiz; gameState.currentQuizList = shuffle(quizData[gameState.currentRoom]).slice(0, _lim);
         updateWrongDots(0, 'quiz');
         renderCurrentQuiz();
       });
@@ -1996,7 +1996,7 @@ function handleInitialAnswer(input, quiz) {
       lockInput(() => {
         gameState.wrongCount       = 0;
         gameState.currentQuizIndex = 0;
-        gameState.currentQuizList  = shuffle(quizData[gameState.currentRoom]);
+        const _lim = DIFFICULTY_CONFIG[gameState.difficulty].quiz; gameState.currentQuizList = shuffle(quizData[gameState.currentRoom]).slice(0, _lim);
         updateWrongDots(0, 'quiz');
         renderCurrentQuiz();
       });
