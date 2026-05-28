@@ -665,29 +665,27 @@
       animation: fadeIn 0.3s ease;
     }
 
-    .modal-box {
+        .modal-box {
       background: white;
       border-radius: 24px;
-      padding: clamp(24px, 4vw, 36px);
-      max-width: 540px;
+      padding: clamp(24px, 5vw, 40px) clamp(20px, 4vw, 36px);
+      max-width: min(92vw, 580px);
       width: 100%;
       box-shadow: 0 24px 64px rgba(0,0,0,0.3);
       animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-      max-height: 90vh;
+      max-height: 92vh;
       overflow-y: auto;
     }
-
     .modal-box h2 {
-      font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+      font-size: clamp(1.3rem, 4vw, 1.7rem);
       font-weight: 800;
       color: var(--primary);
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       text-align: center;
     }
-
     .modal-box p {
-      font-size: clamp(0.95rem, 2.5vw, 1.1rem);
-      line-height: 1.7;
+      font-size: clamp(1rem, 2.8vw, 1.2rem);
+      line-height: 1.75;
       color: var(--text);
       text-align: center;
       margin-bottom: 16px;
@@ -758,6 +756,176 @@
     .code-reveal p { font-size: clamp(0.95rem, 2.5vw, 1.1rem); color: #636e72; margin-top: 8px; }
 
     /* ===========================
+       난이도 선택 화면
+    =========================== */
+    #difficultyScreen {
+      background: linear-gradient(160deg, #FFF9F0 0%, #FFE8E8 50%, #E8F4FF 100%);
+      align-items: center;
+      justify-content: center;
+    }
+    .difficulty-content {
+      width: 100%;
+      max-width: 560px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+    .difficulty-logo {
+      font-size: clamp(3rem, 10vw, 4.5rem);
+      animation: bounceIn 0.8s ease;
+    }
+    .difficulty-title {
+      text-align: center;
+    }
+    .difficulty-title h1 {
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: 2px 2px 0 rgba(255,107,107,0.15);
+    }
+    .difficulty-title p {
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+      color: #636e72;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+    .difficulty-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      width: 100%;
+    }
+    .diff-card {
+      background: white;
+      border-radius: 24px;
+      padding: clamp(24px, 5vw, 36px) 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+      text-align: center;
+      border: 3px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .diff-card:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 16px 40px rgba(0,0,0,0.18); }
+    .diff-card:active { transform: scale(0.97); }
+    .diff-card.junior { border-color: #4ECDC4; }
+    .diff-card.junior:hover { border-color: #4ECDC4; }
+    .diff-card.senior { border-color: #A29BFE; }
+    .diff-card.senior:hover { border-color: #A29BFE; }
+    .diff-card .diff-emoji { font-size: clamp(2.5rem, 8vw, 3.5rem); }
+    .diff-card .diff-label {
+      font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+      font-weight: 900;
+      color: var(--text);
+    }
+    .diff-card.junior .diff-label { color: #00B894; }
+    .diff-card.senior .diff-label { color: #6C5CE7; }
+    .diff-card .diff-desc {
+      font-size: clamp(0.78rem, 2vw, 0.9rem);
+      color: #636e72;
+      line-height: 1.5;
+    }
+    .diff-card .diff-count {
+      font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 4px;
+    }
+    .diff-card.junior .diff-count { background: #E8FDF8; color: #00B894; }
+    .diff-card.senior .diff-count { background: #EEE8FF; color: #6C5CE7; }
+    /* ===========================
+       게임 설명서 화면
+    =========================== */
+    #tutorialScreen {
+      background: linear-gradient(160deg, #FFF9F0 0%, #FFE8E8 50%, #E8F4FF 100%);
+    }
+    .tutorial-content {
+      flex: 1;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .tutorial-title {
+      text-align: center;
+    }
+    .tutorial-title h2 {
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+      font-weight: 900;
+      color: var(--primary);
+    }
+    .tutorial-title p {
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
+      color: #636e72;
+      margin-top: 6px;
+    }
+    .tutorial-steps {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .tutorial-step {
+      background: white;
+      border-radius: 18px;
+      padding: clamp(16px, 3vw, 22px) clamp(16px, 3vw, 24px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .step-icon {
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-text h3 {
+      font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .step-text p {
+      font-size: clamp(0.82rem, 2vw, 0.92rem);
+      color: #636e72;
+      line-height: 1.6;
+    }
+    .tutorial-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    .badge-junior { background: #E8FDF8; color: #00B894; }
+    .badge-senior { background: #EEE8FF; color: #6C5CE7; }
+    .tutorial-start-btn {
+      width: 100%;
+      max-width: 400px;
+      padding: clamp(16px, 3.5vw, 22px);
+      font-size: clamp(1.1rem, 3vw, 1.3rem);
+      font-weight: 800;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--purple));
+      color: white;
+      box-shadow: 0 8px 24px rgba(255,107,107,0.35);
+      transition: all 0.2s;
+    }
+    .tutorial-start-btn:hover { transform: translateY(-3px) scale(1.02); }
+    /* ===========================
        방탈출 입력 화면
     =========================== */
     #escapeScreen {
@@ -808,38 +976,40 @@
 
     .code-slot .slot-label { font-size: 0.6rem; opacity: 0.7; font-weight: 400; margin-top: 2px; }
 
-    .escape-keypad {
+        .escape-keypad {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: clamp(8px, 2vw, 14px);
       width: 100%;
-      max-width: 420px;
+      max-width: min(96vw, 520px);
     }
-
     .key-btn {
       background: rgba(255,255,255,0.1);
       border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 14px;
-      padding: clamp(12px, 3vw, 18px) 8px;
+      border-radius: 16px;
+      padding: clamp(14px, 3.5vh, 22px) 6px;
       color: white;
-      font-size: clamp(0.85rem, 2vw, 1rem);
+      font-size: clamp(0.9rem, 2.2vw, 1.05rem);
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
       text-align: center;
+      aspect-ratio: 1 / 1.1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
-
     .key-btn:hover { background: rgba(255,255,255,0.2); border-color: var(--accent); transform: scale(1.05); }
     .key-btn:active { transform: scale(0.95); }
-
     .key-btn.selected {
       background: rgba(255,230,109,0.3);
       border-color: var(--accent);
       color: var(--accent);
     }
-
-    .key-btn .key-num { font-size: clamp(1rem, 2.5vw, 1.2rem); }
-    .key-btn .key-char { font-size: clamp(0.75rem, 1.8vw, 0.85rem); opacity: 0.8; }
+    .key-btn .key-num { font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 900; }
+    .key-btn .key-char { font-size: clamp(0.85rem, 2.2vw, 1rem); opacity: 0.85; font-weight: 700; }
 
     .escape-actions { display: flex; gap: 12px; width: 100%; max-width: 420px; }
 
@@ -901,14 +1071,15 @@
     }
 
     .success-msg {
-      font-size: clamp(0.95rem, 2.5vw, 1.1rem);
-      line-height: 1.8;
-      max-width: 480px;
+      font-size: clamp(1.05rem, 3vw, 1.25rem);
+      line-height: 1.9;
+      max-width: min(90vw, 520px);
       opacity: 0.9;
       background: rgba(255,255,255,0.1);
-      padding: 24px;
+      padding: clamp(20px, 4vw, 32px);
       border-radius: var(--radius);
       animation: fadeIn 0.8s ease 0.5s both;
+      text-align: center;
     }
 
     .success-restart-btn {
@@ -1043,6 +1214,89 @@
 </div>
 
 <!-- ===========================
+     난이도 선택 화면
+=========================== -->
+<div id="difficultyScreen" class="screen">
+  <div class="difficulty-content">
+    <div class="difficulty-logo">🏦</div>
+    <div class="difficulty-title">
+      <h1>경제꿈터 금융 방탈출</h1>
+      <p>난이도를 선택하세요!</p>
+    </div>
+    <div class="difficulty-cards">
+      <div class="diff-card junior" id="juniorBtn">
+        <div class="diff-emoji">🌱</div>
+        <div class="diff-label">저학년</div>
+        <div class="diff-desc">1~3학년<br>기초 금융 상식</div>
+        <div class="diff-count">총 19문제</div>
+      </div>
+      <div class="diff-card senior" id="seniorBtn">
+        <div class="diff-emoji">👑</div>
+        <div class="diff-label">고학년</div>
+        <div class="diff-desc">4~6학년<br>심화 금융 지식</div>
+        <div class="diff-count">총 38문제</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===========================
+     게임 설명서 화면
+=========================== -->
+<div id="tutorialScreen" class="screen">
+  <div class="header">
+    <button class="icon-btn" id="tutorialBackBtn">←</button>
+    <h1>📚 게임 안내</h1>
+    <div class="header-btns"></div>
+  </div>
+  <div class="tutorial-content">
+    <div class="tutorial-title">
+      <h2>🔐 방탈출 게임 방법</h2>
+      <p id="tutorialDiffLabel">난이도: 고학년</p>
+    </div>
+    <div class="tutorial-steps">
+      <div class="tutorial-step">
+        <div class="step-icon">🏠</div>
+        <div class="step-text">
+          <h3>4개의 방을 클리어하세요!</h3>
+          <p>1번방(사지선다) → 2번방(O/X) → 3번방(초성) → 4번방(카드매칭) 순서로 도전하세요. 각 방을 클리어하면 <strong>암호</strong>를 얻어요!</p>
+        </div>
+      </div>
+      <div class="tutorial-step">
+        <div class="step-icon">📝</div>
+        <div class="step-text">
+          <h3>문제 수</h3>
+          <p>
+            <span class="tutorial-badge badge-junior">저학년</span> 1번방 5문제 &middot; 2번방 5문제 &middot; 3번방 5문제 &middot; 4번방 4쌍<br>
+            <span class="tutorial-badge badge-senior">고학년</span> 1번방 10문제 &middot; 2번방 10문제 &middot; 3번방 10문제 &middot; 4번방 8쌍
+          </p>
+        </div>
+      </div>
+      <div class="tutorial-step">
+        <div class="step-icon">❌</div>
+        <div class="step-text">
+          <h3>오답 3회 제한</h3>
+          <p>같은 방에서 오답이 3회 누적되면 해당 방 첫 문제부터 다시 시작해요. 오답 후에도 카운트는 유지됩니다.</p>
+        </div>
+      </div>
+      <div class="tutorial-step">
+        <div class="step-icon">💡</div>
+        <div class="step-text">
+          <h3>힌트 사용</h3>
+          <p>1에서 3번방에서 전체 3회 사용 가능해요. 힌트를 누르면 현재 문제의 힌트를 보여줘요!</p>
+        </div>
+      </div>
+      <div class="tutorial-step">
+        <div class="step-icon">🔐</div>
+        <div class="step-text">
+          <h3>최종 방탈출</h3>
+          <p>4개 방을 모두 클리어하면 <strong>방탈출 도전</strong> 버튼이 활성화됩니다. 각 방에서 얻은 암호를 순서대로 입력하세요!</p>
+        </div>
+      </div>
+    </div>
+    <button class="tutorial-start-btn" id="tutorialStartBtn">🚀 방탈출 시작!</button>
+  </div>
+</div>
+<!-- ===========================
      메인 화면
 =========================== -->
 <div id="mainScreen" class="screen">
@@ -1113,7 +1367,7 @@
     <button class="icon-btn" id="matchHomeBtn">🏠</button>
     <h1>4번방 - 카드 매칭</h1>
     <div class="header-btns">
-      <button class="icon-btn" id="matchHintBtn" title="힌트">💡</button>
+      <!-- 4번방은 힌트 없음 -->
     </div>
   </div>
 
@@ -1210,6 +1464,7 @@ const CORRECT_CODES = [6, 3, 13, 2];
 // 게임 상태
 // ===========================
 let gameState = {
+  difficulty: 'senior', // 'junior' | 'senior'
   clearedRooms: {},
   codes: {},
   hintsUsed: 0,
@@ -1223,6 +1478,11 @@ let gameState = {
     matched: [],
     wrongCount: 0
   }
+};
+// 난이도별 문제 수
+const DIFFICULTY_CONFIG = {
+  junior: { quiz: 5, match: 4 },
+  senior: { quiz: 10, match: 8 }
 };
 
 let quizData = null;
@@ -1378,12 +1638,19 @@ function showHint(roomKey) {
     showModal({ title: '💡 힌트 소진', message: '힌트를 모두 사용했어요!', confirmText: '확인', onConfirm: () => {} });
     return;
   }
-  const config = ROOM_CONFIG[roomKey];
-  const hint = config.finalHint || '문제를 잘 읽어보세요!';
+  // 현재 풀고 있는 문제의 explanation 가져오기
+  let hint = '문제를 잘 읽어보세요!';
+  const idx = gameState.currentQuizIndex;
+  const list = gameState.currentQuizList;
+  if (list && list.length > 0 && idx < list.length) {
+    const currentQ = list[idx];
+    if (currentQ && currentQ.explanation) {
+      hint = currentQ.explanation;
+    }
+  }
   gameState.hintsUsed++;
   saveState();
   updateHintDisplay();
-
   showModal({
     title: `💡 힌트 (${maxHints - gameState.hintsUsed}회 남음)`,
     message: hint,
@@ -1524,10 +1791,12 @@ function startQuizRoom(roomKey) {
     showModal({ title: '오류', message: '퀴즈 데이터를 불러올 수 없어요.' });
     return;
   }
-  gameState.currentQuizList  = shuffle(rawList);
+  // 난이도별 문제 수 제한
+  const limit = DIFFICULTY_CONFIG[gameState.difficulty].quiz;
+  const shuffled = shuffle(rawList);
+  gameState.currentQuizList  = shuffled.slice(0, Math.min(limit, shuffled.length));
   gameState.currentQuizIndex = 0;
   gameState.wrongCount       = 0;
-
   document.getElementById('quizRoomTitle').textContent = config.name;
   showScreen('quizScreen');
   renderCurrentQuiz();
@@ -1804,18 +2073,21 @@ function handleRoomClear(roomKey) {
 // 문제(?) 8장 + 이미지 8장 = 16장 랜덤 배치
 // ===========================
 function startMatchRoom() {
-  const matchData = quizData['room4'];
-  if (!matchData || matchData.length === 0) {
+  const rawData = quizData['room4'];
+  if (!rawData || rawData.length === 0) {
     showModal({ title: '오류', message: '매칭 데이터를 불러올 수 없어요.' });
     return;
   }
-
+  // 난이도별 카드 수 제한
+  const limit = DIFFICULTY_CONFIG[gameState.difficulty].match;
+  const shuffledData = shuffle(rawData);
+  const matchData = shuffledData.slice(0, Math.min(limit, shuffledData.length));
   gameState.matchState = {
     selectedCard: null,
     matched: [],
-    wrongCount: 0
+    wrongCount: 0,
+    data: matchData
   };
-
   showScreen('matchScreen');
   renderMemoryGrid(matchData);
   updateMatchProgress();
@@ -1938,7 +2210,8 @@ function handleMemCardClick(el, cardData) {
     updateMatchProgress();
     spawnStars(4);
 
-    if (ms.matched.length === quizData['room4'].length) {
+    const totalCards = ms.data ? ms.data.length : (quizData['room4'] ? quizData['room4'].length : 8);
+    if (ms.matched.length === totalCards) {
       setTimeout(() => handleMatchComplete(), 600);
     }
   } else {
@@ -1967,7 +2240,7 @@ function handleMemCardClick(el, cardData) {
 
 function updateMatchProgress() {
   const matched = gameState.matchState.matched.length;
-  const total   = quizData['room4'] ? quizData['room4'].length : 8;
+  const total   = gameState.matchState.data ? gameState.matchState.data.length : (quizData['room4'] ? quizData['room4'].length : 8);
   document.getElementById('matchProgress').textContent = `${matched} / ${total}`;
 }
 
@@ -2089,13 +2362,13 @@ function resetGame() {
     onConfirm: () => {
       localStorage.removeItem(STORAGE_KEY);
       gameState = {
+        difficulty: 'senior',
         clearedRooms: {}, codes: {}, hintsUsed: 0,
         currentRoom: null, currentQuizIndex: 0, currentQuizList: [],
         wrongCount: 0, isLocked: false,
-        matchState: { selectedCard: null, matched: [], wrongCount: 0 }
+        matchState: { selectedCard: null, matched: [], wrongCount: 0, data: [] }
       };
-      renderMainScreen();
-      showScreen('mainScreen');
+      showScreen('difficultyScreen');
     }
   });
 }
@@ -2115,12 +2388,22 @@ function toggleFullscreen() {
 // 이벤트 바인딩
 // ===========================
 function bindEvents() {
+  // 난이도 선택 화면
+  document.getElementById('juniorBtn').addEventListener('click', () => selectDifficulty('junior'));
+  document.getElementById('seniorBtn').addEventListener('click', () => selectDifficulty('senior'));
+  // 튜토리얼 화면
+  document.getElementById('tutorialBackBtn').addEventListener('click', () => showScreen('difficultyScreen'));
+  document.getElementById('tutorialStartBtn').addEventListener('click', () => {
+    showScreen('mainScreen');
+    renderMainScreen();
+  });
+  // 메인 화면
   document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
   document.getElementById('resetBtn').addEventListener('click', resetGame);
   document.getElementById('escapeBtn').addEventListener('click', () => {
     if (!document.getElementById('escapeBtn').disabled) showEscapeScreen();
   });
-
+  // 퀴즈 화면
   document.getElementById('quizHomeBtn').addEventListener('click', () => {
     if (gameState.isLocked) return;
     showScreen('mainScreen'); renderMainScreen();
@@ -2128,20 +2411,32 @@ function bindEvents() {
   document.getElementById('quizHintBtn').addEventListener('click', () => {
     if (gameState.currentRoom) showHint(gameState.currentRoom);
   });
-
+  // 매칭 화면
   document.getElementById('matchHomeBtn').addEventListener('click', () => {
     if (gameState.isLocked) return;
     showScreen('mainScreen'); renderMainScreen();
   });
-  document.getElementById('matchHintBtn').addEventListener('click', () => showHint('room4'));
-
+  // 방탈출 입력 화면
   document.getElementById('escapeHomeBtn').addEventListener('click', () => {
     showScreen('mainScreen'); renderMainScreen();
   });
   document.getElementById('escapeClearBtn').addEventListener('click', handleEscapeClear);
   document.getElementById('escapeSubmitBtn').addEventListener('click', handleEscapeSubmit);
-
   document.getElementById('restartBtn').addEventListener('click', resetGame);
+}
+// ===========================
+// 난이도 선택
+// ===========================
+function selectDifficulty(diff) {
+  gameState.difficulty = diff;
+  // 저장된 진행 상태 초기화 (난이도 변경 시 새로 시작)
+  gameState.clearedRooms = {};
+  gameState.codes = {};
+  gameState.hintsUsed = 0;
+  // 튜토리얼 화면에 난이도 표시
+  const label = document.getElementById('tutorialDiffLabel');
+  if (label) label.textContent = `난이도: ${diff === 'junior' ? '저학년 (전체 19문제)' : '고학년 (전체 38문제)'}`;
+  showScreen('tutorialScreen');
 }
 
 // ===========================
@@ -2168,14 +2463,10 @@ async function init() {
     const res = await fetch(DATA_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     quizData = await res.json();
-
     preloadImages();
-    loadState();
     bindEvents();
-    renderMainScreen();
-
     document.getElementById('loadingScreen').style.display = 'none';
-    showScreen('mainScreen');
+    showScreen('difficultyScreen');
   } catch (err) {
     console.error('초기화 오류:', err);
     document.getElementById('loadingScreen').innerHTML = `
