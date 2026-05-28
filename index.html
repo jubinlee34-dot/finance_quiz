@@ -461,6 +461,21 @@
       100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
     }
 
+    /* 난이도 배지 */
+    .diff-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .diff-badge.junior { background: rgba(78,205,196,0.25); color: #fff; border: 1.5px solid rgba(78,205,196,0.6); }
+    .diff-badge.senior { background: rgba(162,155,254,0.25); color: #fff; border: 1.5px solid rgba(162,155,254,0.6); }
+
     /* 오답 점 */
     .wrong-indicator { display: flex; gap: 6px; align-items: center; }
 
@@ -1303,6 +1318,7 @@
   <div class="header">
     <h1>🏦 경제꿈터 금융 방탈출</h1>
     <div class="header-btns">
+      <span class="diff-badge" id="mainDiffBadge"></span>
       <button class="icon-btn" id="fullscreenBtn" title="전체화면">⛶</button>
       <button class="icon-btn" id="resetBtn" title="리셋">🔄</button>
     </div>
@@ -1331,6 +1347,7 @@
     <button class="icon-btn" id="quizHomeBtn">🏠</button>
     <h1 id="quizRoomTitle">1번방</h1>
     <div class="header-btns">
+      <span class="diff-badge" id="quizDiffBadge"></span>
       <button class="icon-btn" id="quizHintBtn" title="힌트">💡</button>
     </div>
   </div>
@@ -1367,7 +1384,7 @@
     <button class="icon-btn" id="matchHomeBtn">🏠</button>
     <h1>4번방 - 카드 매칭</h1>
     <div class="header-btns">
-      <!-- 4번방은 힌트 없음 -->
+      <span class="diff-badge" id="matchDiffBadge"></span>
     </div>
   </div>
 
@@ -1398,7 +1415,9 @@
   <div class="header">
     <button class="icon-btn" id="escapeHomeBtn">🏠</button>
     <h1>🔐 방탈출 코드 입력</h1>
-    <div class="header-btns"></div>
+    <div class="header-btns">
+      <span class="diff-badge" id="escapeDiffBadge"></span>
+    </div>
   </div>
 
   <div class="escape-content">
@@ -1505,6 +1524,7 @@ function shuffle(arr) {
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      difficulty:   gameState.difficulty,
       clearedRooms: gameState.clearedRooms,
       codes: gameState.codes,
       hintsUsed: gameState.hintsUsed
@@ -1517,6 +1537,7 @@ function loadState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const d = JSON.parse(saved);
+      if (d.difficulty) gameState.difficulty = d.difficulty;
       gameState.clearedRooms = d.clearedRooms || {};
       gameState.codes        = d.codes        || {};
       gameState.hintsUsed    = d.hintsUsed    || 0;
@@ -1730,6 +1751,7 @@ function showModal(opts) {
 // 메인 화면
 // ===========================
 function renderMainScreen() {
+  updateDifficultyBadges();
   const grid = document.getElementById('roomsGrid');
   grid.innerHTML = '';
 
@@ -2088,6 +2110,7 @@ function startMatchRoom() {
     wrongCount: 0,
     data: matchData
   };
+  updateDifficultyBadges();
   showScreen('matchScreen');
   renderMemoryGrid(matchData);
   updateMatchProgress();
@@ -2267,6 +2290,7 @@ let escapeInputSequence = [];
 
 function showEscapeScreen() {
   escapeInputSequence = [];
+  updateDifficultyBadges();
   showScreen('escapeScreen');
   renderCodeDisplay();
   renderKeypad();
@@ -2427,12 +2451,26 @@ function bindEvents() {
 // ===========================
 // 난이도 선택
 // ===========================
+function updateDifficultyBadges() {
+  const diff = gameState.difficulty;
+  const isJunior = diff === 'junior';
+  const text = isJunior ? '🌱 저학년' : '👑 고학년';
+  const cls  = isJunior ? 'junior' : 'senior';
+  ['mainDiffBadge','quizDiffBadge','matchDiffBadge','escapeDiffBadge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'diff-badge ' + cls;
+  });
+}
 function selectDifficulty(diff) {
   gameState.difficulty = diff;
   // 저장된 진행 상태 초기화 (난이도 변경 시 새로 시작)
   gameState.clearedRooms = {};
   gameState.codes = {};
   gameState.hintsUsed = 0;
+  saveState();
+  updateDifficultyBadges();
   // 튜토리얼 화면에 난이도 표시
   const label = document.getElementById('tutorialDiffLabel');
   if (label) label.textContent = `난이도: ${diff === 'junior' ? '저학년 (전체 19문제)' : '고학년 (전체 38문제)'}`;
@@ -2463,10 +2501,19 @@ async function init() {
     const res = await fetch(DATA_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     quizData = await res.json();
+    loadState();
     preloadImages();
     bindEvents();
     document.getElementById('loadingScreen').style.display = 'none';
-    showScreen('difficultyScreen');
+    // 저장된 난이도가 있으면 메인화면으로, 없으면 난이도 선택으로
+    if (gameState.difficulty && Object.keys(gameState.clearedRooms).length > 0) {
+      updateDifficultyBadges();
+      showScreen('mainScreen');
+      renderRooms();
+      updateHintCounter();
+    } else {
+      showScreen('difficultyScreen');
+    }
   } catch (err) {
     console.error('초기화 오류:', err);
     document.getElementById('loadingScreen').innerHTML = `
