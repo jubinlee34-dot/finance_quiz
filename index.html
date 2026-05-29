@@ -1324,11 +1324,23 @@
     }
     .mg-layout {
       position: relative; z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(280px, 1fr) 280px;
-      gap: 14px;
-      max-width: 1180px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 600px;
       margin: 0 auto;
+    }
+    .mg-bottom-bar {
+      width: 100%;
+    }
+    .mg-golden-timer {
+      font-size: 13px;
+      font-weight: 900;
+      color: #c47a00;
+      background: rgba(255,235,100,0.7);
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
     }
     .mg-board-zone {
       display: grid;
@@ -1607,14 +1619,12 @@
       40%,80% { transform: translateX(6px); }
     }
     /* 미니게임 반응형 */
-    @media (max-width: 700px) {
-      .mg-layout { grid-template-columns: 1fr; }
-      .mg-word-panel { max-height: 220px; overflow-y: auto; }
-      .mg-board-wrap { width: min(90vw, 100%); }
-    }
+    .mg-word-panel { max-height: none; overflow-y: visible; }
+    .mg-board-wrap { width: min(90vw, 100%); margin: 0 auto; }
     @media (max-width: 480px) {
       .mg-hud { grid-template-columns: repeat(4, 1fr); gap: 5px; }
       .mg-hud-item { min-width: 0; padding: 6px 4px; }
+      .mg-topbar .mg-brand { display: none; }
     }
   </style>
 </head>
@@ -1890,11 +1900,22 @@
       </div>
     </header>
     <main class="mg-layout">
-      <section class="mg-board-zone">
+      <!-- 1. 찾을 단어 패널 (상단) -->
+      <aside class="mg-word-panel">
+        <div class="mg-panel-title">
+          <h3>찾을 금융 단어</h3>
+          <button class="mg-sound-btn" id="mgSoundBtn" type="button">🔊</button>
+        </div>
+        <!-- 황금 단어 리본 (타이머 포함) -->
         <div class="mg-status-ribbon">
           <span id="mgGoldenWordText">⭐ 황금 단어 준비!</span>
+          <span id="mgGoldenTimerText" class="mg-golden-timer"></span>
           <span id="mgLastRecordText">지난 기록 0점</span>
         </div>
+        <ul class="mg-word-list" id="mgWordList"></ul>
+      </aside>
+      <!-- 2. 단어판 -->
+      <section class="mg-board-zone">
         <div class="mg-board-wrap">
           <div class="mg-board" id="mgBoard"></div>
           <canvas class="mg-fx-canvas" id="mgFxCanvas" aria-hidden="true"></canvas>
@@ -1904,15 +1925,12 @@
           <strong id="mgCurrentWordText">-</strong>
         </div>
       </section>
-      <aside class="mg-word-panel">
-        <div class="mg-panel-title">
-          <h3>찾을 금융 단어</h3>
-          <button class="mg-sound-btn" id="mgSoundBtn" type="button">🔊</button>
-        </div>
-        <ul class="mg-word-list" id="mgWordList"></ul>
-        <button class="mg-primary-btn" id="mgNewGameBtn" type="button">새 게임</button>
+      <!-- 3. 돌아가기 버튼 -->
+      <div class="mg-bottom-bar">
         <button class="mg-exit-btn" id="mgExitBtn" type="button">🏠 돌아가기</button>
-      </aside>
+      </div>
+      <!-- 새 게임 버튼 (숨김 - 이벤트 바인딩용) -->
+      <button id="mgNewGameBtn" type="button" style="display:none;">새 게임</button>
     </main>
     <!-- 미니게임 오버레이 -->
     <div class="mg-overlay mg-show" id="mgStartOverlay">
@@ -3147,11 +3165,13 @@ document.addEventListener('DOMContentLoaded', init);
     return { board: board, targets: placed.length > 0 ? placed : targets };
   }
 
+  var GOLDEN_CHANGE_SECS = 30;
   function mgResetState() {
     mgState = {
       board: [],
       targets: [],
       goldenWord: '',
+      goldenTimerSecs: GOLDEN_CHANGE_SECS,
       score: 0,
       secondsLeft: GAME_SECONDS,
       running: false,
@@ -3225,6 +3245,12 @@ document.addEventListener('DOMContentLoaded', init);
     } else {
       mgEls.timeBox.classList.remove('mg-urgent');
     }
+    // 황금 단어 타이머 표시
+    if (mgState.running && mgEls.goldenTimerText) {
+      mgEls.goldenTimerText.textContent = '⏱ ' + mgState.goldenTimerSecs + '초';
+    } else if (mgEls.goldenTimerText) {
+      mgEls.goldenTimerText.textContent = '';
+    }
   }
 
   function mgStartCountdown() {
@@ -3248,10 +3274,22 @@ document.addEventListener('DOMContentLoaded', init);
   function mgBeginGame() {
     mgState.running = true;
     mgState.secondsLeft = GAME_SECONDS;
+    mgState.goldenTimerSecs = GOLDEN_CHANGE_SECS;
     mgUpdateHud();
     mgTimerInterval = setInterval(function() {
       if (!mgState.running) return;
       mgState.secondsLeft--;
+      // 황금 단어 타이머 감소
+      mgState.goldenTimerSecs--;
+      if (mgState.goldenTimerSecs <= 0) {
+        // 황금 단어 교체
+        var remaining = mgState.targets.filter(function(t){ return !t.found && t.text !== mgState.goldenWord; });
+        if (remaining.length > 0) {
+          mgState.goldenWord = mgShuffle(remaining)[0].text;
+        }
+        mgState.goldenTimerSecs = GOLDEN_CHANGE_SECS;
+        mgRenderWordList();
+      }
       mgUpdateHud();
       if (mgState.secondsLeft <= 0) mgEndGame();
     }, 1000);
@@ -3528,6 +3566,7 @@ function startMiniGame() {
       bestText:        document.getElementById('mgBestText'),
       comboText:       document.getElementById('mgComboText'),
       goldenWordText:  document.getElementById('mgGoldenWordText'),
+      goldenTimerText: document.getElementById('mgGoldenTimerText'),
       lastRecordText:  document.getElementById('mgLastRecordText'),
       currentWordText: document.getElementById('mgCurrentWordText'),
       wordList:        document.getElementById('mgWordList'),
