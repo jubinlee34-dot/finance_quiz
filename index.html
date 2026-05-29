@@ -1475,52 +1475,89 @@
       cursor: pointer;
       font-size: 18px;
     }
+    /* 단어 카드 3개 가로 배치 */
     .mg-word-list {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
       margin: 0; padding: 0;
-      overflow: auto;
       list-style: none;
+      justify-content: stretch;
     }
     .mg-word-item {
+      flex: 1 1 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 4px;
-      padding: 6px 8px;
-      border: 2px solid rgba(44,106,169,0.14);
-      border-radius: 11px;
+      padding: 10px 6px;
+      border: 2.5px solid rgba(44,106,169,0.18);
+      border-radius: 14px;
       background: #fff;
-      font-size: 14px;
-      font-weight: 950;
-      transition: transform 170ms ease, background 170ms ease, color 170ms ease;
+      font-size: 15px;
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      transition: transform 170ms ease, background 170ms ease, opacity 170ms ease;
+      min-width: 0;
     }
     .mg-word-item .mg-check {
       display: grid; place-items: center;
-      width: 25px; height: 25px;
+      width: 22px; height: 22px;
       flex: 0 0 auto;
       border-radius: 50%;
       background: #e8f2ff;
       color: #6e87a1;
+      font-size: 12px;
     }
     .mg-word-item .mg-diff {
-      margin-left: auto;
-      padding: 2px 6px;
+      padding: 1px 6px;
       border-radius: 9px;
       color: #fff;
       background: #44a0ff;
       font-size: 10px;
+      font-weight: 700;
     }
     .mg-word-item.medium .mg-diff { background: #ff9b38; }
     .mg-word-item.hard   .mg-diff { background: #e94891; }
-    .mg-word-item.mg-golden { border-color: #f7b900; background: #fff7c4; }
-    .mg-word-item.mg-found {
-      color: #19774d;
-      background: #dbffe9;
-      transform: scale(1.03);
+    .mg-word-item.mg-golden {
+      border-color: #f7b900;
+      background: linear-gradient(135deg, #fff7c4, #ffe88a);
+      box-shadow: 0 0 0 2px #f7b900, 0 4px 12px rgba(247,185,0,0.3);
     }
-    .mg-word-item.mg-found .mg-check { background: #39d083; color: #fff; }
+    /* 단어 찾음 사라짐 애니메이션 */
+    @keyframes mgCardPop {
+      0%   { transform: scale(0.6); opacity: 0; }
+      70%  { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes mgCardVanish {
+      0%   { transform: scale(1); opacity: 1; }
+      40%  { transform: scale(1.15) rotate(5deg); opacity: 1; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+    .mg-word-item.mg-vanish { animation: mgCardVanish 400ms ease forwards; }
+    .mg-word-item.mg-appear { animation: mgCardPop 350ms ease forwards; }
+    /* 단계 표시바 */
+    .mg-stage-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 0 2px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #17436b;
+    }
+    .mg-stage-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #cde;
+      transition: background 0.3s;
+    }
+    .mg-stage-dot.active { background: #f7b900; box-shadow: 0 0 6px rgba(247,185,0,0.6); }
+    .mg-stage-dot.done   { background: #39d083; }
     .mg-primary-btn {
       display: inline-grid;
       place-items: center;
@@ -1905,6 +1942,13 @@
         <div class="mg-panel-title">
           <h3>찾을 금융 단어</h3>
           <button class="mg-sound-btn" id="mgSoundBtn" type="button">🔊</button>
+        </div>
+        <!-- 단계 표시바 -->
+        <div class="mg-stage-bar" id="mgStageBar">
+          <span id="mgStageText">단계 1 / 3</span>
+          <div class="mg-stage-dot active" id="mgStageDot1"></div>
+          <div class="mg-stage-dot" id="mgStageDot2"></div>
+          <div class="mg-stage-dot" id="mgStageDot3"></div>
         </div>
         <!-- 황금 단어 리본 (타이머 포함) -->
         <div class="mg-status-ribbon">
@@ -3166,10 +3210,18 @@ document.addEventListener('DOMContentLoaded', init);
   }
 
   var GOLDEN_CHANGE_SECS = 30;
+  var WORDS_PER_STAGE = 4; // 단계당 찾아야 할 단어 수
+  var TOTAL_STAGES = 3;
+  var VISIBLE_CARDS = 3; // 화면에 보이는 카드 수
   function mgResetState() {
     mgState = {
       board: [],
-      targets: [],
+      targets: [],       // 전체 단어 풀
+      queue: [],         // 다음에 보여줄 단어 대기열
+      visible: [],       // 현재 화면에 보이는 3개
+      stageFound: 0,     // 현 단계에서 찾은 수
+      stage: 1,          // 현재 단계 (1~3)
+      totalFound: 0,     // 전체 찾은 수
       goldenWord: '',
       goldenTimerSecs: GOLDEN_CHANGE_SECS,
       score: 0,
@@ -3182,13 +3234,30 @@ document.addEventListener('DOMContentLoaded', init);
     };
   }
 
+  // 전체 단어 풀 생성 (12개: 단계당 4개 x 3단계)
+  function mgPickAllWords() {
+    var easy   = mgShuffle(WORD_BANK.filter(function(w){ return w.level === 'easy'; }));
+    var medium = mgShuffle(WORD_BANK.filter(function(w){ return w.level === 'medium'; }));
+    var hard   = mgShuffle(WORD_BANK.filter(function(w){ return w.level === 'hard'; }));
+    var all = easy.concat(medium).concat(hard);
+    // 12개 선택 (4쉽이:4보통:4어려움 아니면 전체에서 12개)
+    var pool = mgShuffle(all).slice(0, WORDS_PER_STAGE * TOTAL_STAGES);
+    return pool.map(function(w){ return { text: w.text, score: w.score, level: w.level, found: false }; });
+  }
   function mgSetupNewGame() {
     mgResetState();
-    var targets = mgPickTargets();
-    var gen = mgGenerateBoard(targets);
+    // 전체 12개 단어 풀 생성
+    var allWords = mgPickAllWords();
+    mgState.targets = allWords;
+    mgState.queue = allWords.slice(); // 복사본
+    // 시작 3개 visible로
+    mgState.visible = [mgState.queue.shift(), mgState.queue.shift(), mgState.queue.shift()];
+    // 황금 단어: visible 중 1개
+    mgState.goldenWord = mgState.visible[Math.floor(Math.random() * mgState.visible.length)].text;
+    // 보드: visible 3개 + 대기열에서 추가 단어들로 생성
+    var boardWords = mgState.visible.concat(mgState.queue.slice(0, 9));
+    var gen = mgGenerateBoard(boardWords);
     mgState.board = gen.board;
-    mgState.targets = gen.targets;
-    mgState.goldenWord = mgShuffle(mgState.targets)[0].text;
     var best = parseInt(localStorage.getItem(STORAGE_BEST) || '0', 10);
     var last = parseInt(localStorage.getItem(STORAGE_LAST) || '0', 10);
     mgEls.bestText.textContent = String(best);
@@ -3196,6 +3265,16 @@ document.addEventListener('DOMContentLoaded', init);
     mgRender();
     mgRenderWordList();
     mgUpdateHud();
+    mgUpdateStageBar();
+  }
+  function mgUpdateStageBar() {
+    if (!mgEls.stageText) return;
+    mgEls.stageText.textContent = '단계 ' + mgState.stage + ' / ' + TOTAL_STAGES;
+    mgEls.stageDots.forEach(function(dot, i) {
+      dot.className = 'mg-stage-dot';
+      if (i + 1 < mgState.stage) dot.classList.add('done');
+      else if (i + 1 === mgState.stage) dot.classList.add('active');
+    });
   }
 
   function mgRender() {
@@ -3222,14 +3301,17 @@ document.addEventListener('DOMContentLoaded', init);
     });
   }
 
-  function mgRenderWordList() {
+  function mgRenderWordList(animateIdx) {
     mgEls.wordList.innerHTML = '';
-    mgState.targets.forEach(function(t) {
+    mgState.visible.forEach(function(t, idx) {
       var li = document.createElement('li');
-      li.className = 'mg-word-item ' + t.level + (t === mgState.targets.find(function(x){ return x.text === mgState.goldenWord; }) ? ' mg-golden' : '') + (t.found ? ' mg-found' : '');
-      li.innerHTML = '<span class="mg-check">' + (t.found ? '✓' : '○') + '</span>' +
-        '<span>' + t.text + '</span>' +
-        '<span class="mg-diff">' + { easy: '쉬움', medium: '보통', hard: '어려움' }[t.level] + '</span>';
+      var isGolden = t.text === mgState.goldenWord;
+      li.className = 'mg-word-item ' + t.level + (isGolden ? ' mg-golden' : '');
+      if (animateIdx === idx) li.classList.add('mg-appear');
+      li.dataset.word = t.text;
+      li.innerHTML =
+        '<span class="mg-diff">' + { easy: '쉬움', medium: '보통', hard: '어려움' }[t.level] + '</span>' +
+        '<span style="font-size:16px;font-weight:900;">' + (isGolden ? '⭐ ' : '') + t.text + '</span>';
       mgEls.wordList.appendChild(li);
     });
   }
@@ -3276,16 +3358,17 @@ document.addEventListener('DOMContentLoaded', init);
     mgState.secondsLeft = GAME_SECONDS;
     mgState.goldenTimerSecs = GOLDEN_CHANGE_SECS;
     mgUpdateHud();
+    mgUpdateStageBar();
     mgTimerInterval = setInterval(function() {
       if (!mgState.running) return;
       mgState.secondsLeft--;
       // 황금 단어 타이머 감소
       mgState.goldenTimerSecs--;
       if (mgState.goldenTimerSecs <= 0) {
-        // 황금 단어 교체
-        var remaining = mgState.targets.filter(function(t){ return !t.found && t.text !== mgState.goldenWord; });
+        // 황금 단어 교체 (visible 중에서)
+        var remaining = mgState.visible.filter(function(t){ return t && t.text !== mgState.goldenWord; });
         if (remaining.length > 0) {
-          mgState.goldenWord = mgShuffle(remaining)[0].text;
+          mgState.goldenWord = remaining[Math.floor(Math.random() * remaining.length)].text;
         }
         mgState.goldenTimerSecs = GOLDEN_CHANGE_SECS;
         mgRenderWordList();
@@ -3362,7 +3445,8 @@ document.addEventListener('DOMContentLoaded', init);
 
   function mgCheckWord() {
     var word = mgState.selected.map(function(s){ return s.tile.textContent; }).join('');
-    var target = mgState.targets.find(function(t){ return !t.found && t.text === word; });
+    // visible 카드에서만 체크
+    var target = mgState.visible.find(function(t){ return t && !t.found && t.text === word; });
     if (target) {
       mgHandleSuccess(target);
     } else {
@@ -3397,20 +3481,62 @@ document.addEventListener('DOMContentLoaded', init);
     setTimeout(function() { mgEls.shell.classList.remove('mg-shake'); }, 300);
     mgPlayTone(isGolden ? 'gold' : (mgState.combo >= 2 ? 'combo' : 'success'));
     mgClearSelection();
-    mgRenderWordList();
     mgUpdateHud();
-    // 전체 클리어 시 새 보드
-    if (mgState.targets.every(function(t){ return t.found; })) {
-      mgState.secondsLeft = Math.min(mgState.secondsLeft + 20, GAME_SECONDS);
-      mgShowScorePop(window.innerWidth / 2, window.innerHeight * 0.28, '전체 클리어 +20초!');
-      mgState.targets.forEach(function(t){ t.found = false; delete t.cells; });
-      var gen = mgGenerateBoard(mgPickTargets());
-      mgState.board = gen.board;
-      mgState.targets = gen.targets;
-      mgState.goldenWord = mgShuffle(mgState.targets)[0].text;
-      mgRender();
-      mgRenderWordList();
+
+    // 단계/큐 로직
+    mgState.stageFound++;
+    mgState.totalFound++;
+
+    // 사라짐 애니메이션 후 카드 교체
+    var foundIdx = mgState.visible.indexOf(target);
+    var li = mgEls.wordList.children[foundIdx];
+    if (li) {
+      li.classList.add('mg-vanish');
     }
+
+    setTimeout(function() {
+      // 새 단어 보충
+      var newWord = mgState.queue.shift();
+      if (newWord) {
+        mgState.visible[foundIdx] = newWord;
+        // 황금 단어가 사라졌으면 새 황금 지정
+        if (target.text === mgState.goldenWord) {
+          mgState.goldenWord = mgState.visible[Math.floor(Math.random() * mgState.visible.length)].text;
+        }
+        mgRenderWordList(foundIdx);
+      } else {
+        // 대기열 소진 경우: visible에서만 제거
+        mgState.visible.splice(foundIdx, 1);
+        if (target.text === mgState.goldenWord && mgState.visible.length > 0) {
+          mgState.goldenWord = mgState.visible[Math.floor(Math.random() * mgState.visible.length)].text;
+        }
+        mgRenderWordList();
+      }
+
+      // 단계 완료 체크
+      if (mgState.stageFound >= WORDS_PER_STAGE) {
+        if (mgState.stage < TOTAL_STAGES) {
+          // 다음 단계로
+          mgState.stage++;
+          mgState.stageFound = 0;
+          mgState.secondsLeft = Math.min(mgState.secondsLeft + 20, GAME_SECONDS);
+          mgShowScorePop(window.innerWidth / 2, window.innerHeight * 0.28, '단계 ' + (mgState.stage - 1) + ' 클리어! +20초');
+          mgUpdateStageBar();
+          // 새 보드 생성
+          var remaining = mgState.visible.filter(function(v){ return v && !v.found; });
+          var boardWords = remaining.concat(mgState.queue.slice(0, 12));
+          var gen = mgGenerateBoard(boardWords);
+          mgState.board = gen.board;
+          mgRender();
+        } else {
+          // 3단계 모두 완료
+          mgState.secondsLeft = Math.min(mgState.secondsLeft + 30, GAME_SECONDS);
+          mgShowScorePop(window.innerWidth / 2, window.innerHeight * 0.28, '전체 완료! 축하해요! 🎉');
+          mgUpdateStageBar();
+          setTimeout(mgEndGame, 1500);
+        }
+      }
+    }, 420);
   }
 
   function mgSelectionCenter() {
@@ -3568,6 +3694,8 @@ function startMiniGame() {
       goldenWordText:  document.getElementById('mgGoldenWordText'),
       goldenTimerText: document.getElementById('mgGoldenTimerText'),
       lastRecordText:  document.getElementById('mgLastRecordText'),
+      stageText:       document.getElementById('mgStageText'),
+      stageDots:       [document.getElementById('mgStageDot1'), document.getElementById('mgStageDot2'), document.getElementById('mgStageDot3')],
       currentWordText: document.getElementById('mgCurrentWordText'),
       wordList:        document.getElementById('mgWordList'),
       startOverlay:    document.getElementById('mgStartOverlay'),
